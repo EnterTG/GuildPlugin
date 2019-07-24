@@ -1,4 +1,4 @@
-package com.windskull.converters;
+package com.windskull.Converters;
 
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -21,9 +21,7 @@ public class DTOConverter {
 		g.setOpis(guild.getOpis());
 		g.setTag(guild.getTag());
 		g.setAllOfflinePlayer(guild.getAllGuildPlayer());
-		
 		return g;
-
 	}
 	
 	
@@ -43,5 +41,7 @@ public class DTOConverter {
 		else
 			return null;
 	}
+	
+	
 	
 }

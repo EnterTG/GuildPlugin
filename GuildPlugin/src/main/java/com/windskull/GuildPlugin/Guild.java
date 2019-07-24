@@ -3,6 +3,7 @@ package com.windskull.GuildPlugin;
 import java.util.List;
 
 import com.windskull.DTO.DTO_GuildPlayer;
+import com.windskull.Events.GuildPlayerLogInEvent;
 
 public class Guild {
 
@@ -91,4 +92,18 @@ public class Guild {
 
 	}
 
+	public void playerLogIn(DTO_GuildPlayer dtogp ,GuildPlayer g)
+	{
+		allGuildPlayers.add(g);
+		allOfflinePlayer.remove(dtogp);
+		GuildPlayerLogInEvent e = new GuildPlayerLogInEvent();
+		e.setGuild(this);
+		e.setPlayer(g);
+		
+		GuildPluginMain.server.getPluginManager().callEvent(e);
+	}
+	
+	
+	
+	
 }

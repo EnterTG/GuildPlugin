@@ -1,17 +1,24 @@
 package com.windskull.GuildPlugin;
 
 import org.bukkit.Server;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.avaje.ebean.EbeanServer;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
+import com.windskull.DTO.DTO_Guild;
+import com.windskull.DTO.DTO_GuildPlayer;
+import com.windskull.Listeners.GuildPlayerJoinServerListener;
+import com.windskull.Listeners.PlayerJoinListener;
 
 public class GuildPluginMain extends JavaPlugin{
 
 	
 	public static Server server; 
+	public static EbeanServer eserver;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable()
 	{
@@ -21,8 +28,8 @@ public class GuildPluginMain extends JavaPlugin{
 		EbeanHandler handler = manager.getHandler(this);
 		if (handler.isNotInitialized()) 
 		{
-			//handler.define(MyClass.class);
-			
+			handler.define(DTO_GuildPlayer.class);
+			handler.define(DTO_Guild.class);
 			try {
 				handler.initialize();
 			} catch(Exception e) {
@@ -33,9 +40,13 @@ public class GuildPluginMain extends JavaPlugin{
 		}
 		handler.reflect();
 		handler.install();
-		EbeanServer eserver = handler.getServer();
+		eserver = handler.getServer();
 		
 		server = this.getServer();
+		PluginManager pm = server.getPluginManager();
+		
+		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
+		pm.registerEvents(new PlayerJoinListener(), this);
 		
 	}
 }

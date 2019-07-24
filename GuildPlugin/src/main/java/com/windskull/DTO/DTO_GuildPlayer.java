@@ -13,6 +13,18 @@ import com.windskull.GuildPlugin.GuildRanks;
 @Table(name = "GuildPlayers")
 public class DTO_GuildPlayer {
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object arg0) 
+	{
+		DTO_GuildPlayer t = (DTO_GuildPlayer)arg0;
+		
+		
+		return t.getPlayeruuid().equals(this.getPlayeruuid());
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -84,7 +96,6 @@ public class DTO_GuildPlayer {
 	public DTO_GuildPlayer() 
 	{
 	}
-	
 	
 	
 
