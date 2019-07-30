@@ -39,10 +39,14 @@ public class GuildPlayerLogInEvent extends Event{
 	private GuildPlayer player;
 	private Guild guild;
 	
-	
+	private static final HandlerList handlers = new HandlerList();
 	@Override
 	public HandlerList getHandlers() {
-		return null;
+		return handlers;
+	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
 	}
 
 }

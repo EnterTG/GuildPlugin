@@ -4,8 +4,10 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.windskull.GuildPlugin.GuildRanks;
@@ -83,8 +85,8 @@ public class DTO_GuildPlayer {
 	@Id
 	private int id;
 	
-	
-	@ManyToOne
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="OWNER_ID")
 	private DTO_Guild guild;
 	
 	@Column

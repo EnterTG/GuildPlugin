@@ -1,5 +1,8 @@
 package com.windskull.Converters;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -25,22 +28,43 @@ public class DTOConverter {
 	}
 	
 	
-	public GuildPlayer getGuildPlayer(Guild guild,DTO_GuildPlayer gplayer)
+	public static GuildPlayer getGuildPlayer(Guild guild,DTO_GuildPlayer gplayer)
 	{
 		Server server = GuildPluginMain.server;
 		
 		Player p = server.getPlayer(gplayer.getPlayeruuid());
 		if(p != null)
 		{
-			GuildPlayer gp = new GuildPlayer();
-			gp.setGuild(guild);
-			gp.setPlayer(p);
-			gp.setRang(gplayer.getRang());
+			GuildPlayer gp = new GuildPlayer(p,gplayer.getRang(),guild);
 			return gp;
 		}
 		else
 			return null;
 	}
+	
+	public static DTO_Guild convertGuildToDTO(Guild g)
+	{
+		DTO_Guild dg = new DTO_Guild();
+		dg.setName(g.getName());
+		dg.setTag(g.getTag());
+		dg.setOpis(g.getOpis());
+		
+		List<DTO_GuildPlayer> allguildpalyers = g.getAllOfflinePlayer();
+		g.getAllGuildPlayers().forEach(p -> allguildpalyers.add(convertGuildPlayerToDTO(dg,p)));
+		dg.setAllGuildPlayer(allguildpalyers);
+		return dg;
+	}
+	
+	
+	public static DTO_GuildPlayer convertGuildPlayerToDTO(DTO_Guild dguild,GuildPlayer gp)
+	{
+		DTO_GuildPlayer dgp = new DTO_GuildPlayer();
+		dgp.setPlayeruuid(gp.getPlayer().getUniqueId());
+		dgp.setRang(gp.getRang());
+		dgp.setGuild(dguild);
+		return dgp;
+	}
+	
 	
 	
 	

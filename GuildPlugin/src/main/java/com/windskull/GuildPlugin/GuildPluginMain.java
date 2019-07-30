@@ -1,20 +1,26 @@
 package com.windskull.GuildPlugin;
 
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.avaje.ebean.EbeanServer;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
+import com.windskull.Converters.DTOConverter;
 import com.windskull.DTO.DTO_Guild;
 import com.windskull.DTO.DTO_GuildPlayer;
 import com.windskull.Listeners.GuildPlayerJoinServerListener;
 import com.windskull.Listeners.PlayerJoinListener;
+import com.windskull.Managers.GuildsManager;
 
 public class GuildPluginMain extends JavaPlugin{
 
 	
+
 	public static Server server; 
 	public static EbeanServer eserver;
 
@@ -48,5 +54,34 @@ public class GuildPluginMain extends JavaPlugin{
 		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
 		pm.registerEvents(new PlayerJoinListener(), this);
 		
+	}
+	
+	
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+	{
+		if(args.length >= 4)
+		{
+			switch (args[0]) {
+			case "create":
+				
+				Guild g = new Guild();
+				g.setName(args[1]);
+				g.setOpis(args[2]);
+				g.setTag(args[3]);
+				Player p = (Player)sender;
+				GuildPlayer gp = new GuildPlayer(p,GuildRanks.Owner,g);
+				g.addNewPlayer(gp);
+				GuildsManager.getGuildManager().addNewGuild(g);
+				eserver.save(DTOConverter.convertGuildToDTO(g));
+				break;
+			default:
+				break;
+			}
+		}
+		
+		
+		return super.onCommand(sender, command, label, args);
 	}
 }

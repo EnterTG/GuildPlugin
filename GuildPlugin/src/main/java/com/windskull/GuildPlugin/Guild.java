@@ -1,5 +1,6 @@
 package com.windskull.GuildPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.windskull.DTO.DTO_GuildPlayer;
@@ -89,7 +90,8 @@ public class Guild {
 
 	public Guild() 
 	{
-
+		allGuildPlayers = new ArrayList<GuildPlayer>();
+		allOfflinePlayer = new ArrayList<>();
 	}
 
 	public void playerLogIn(DTO_GuildPlayer dtogp ,GuildPlayer g)
@@ -105,5 +107,10 @@ public class Guild {
 	
 	
 	
+	
+	public void addNewPlayer(GuildPlayer gp)
+	{
+		allGuildPlayers.add(gp);
+	}
 	
 }

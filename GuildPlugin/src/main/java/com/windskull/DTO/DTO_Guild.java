@@ -3,9 +3,12 @@ package com.windskull.DTO;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
+import javax.persistence.Table;
+@Entity
+@Table(name = "Guilds")
 public class DTO_Guild {
 
 	/**
@@ -92,7 +95,8 @@ public class DTO_Guild {
 	@Column
 	private String opis;
 	
-	@OneToMany(mappedBy = "GuildPlayers")
+	
+	@OneToMany(mappedBy = "guild", targetEntity = DTO_GuildPlayer.class)
 	private List<DTO_GuildPlayer> allGuildPlayer;
 	
 	

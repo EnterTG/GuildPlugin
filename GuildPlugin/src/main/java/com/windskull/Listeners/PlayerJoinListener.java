@@ -13,7 +13,6 @@ import com.windskull.Managers.GuildsManager;
 public class PlayerJoinListener implements Listener
 {
 
-
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
@@ -21,13 +20,8 @@ public class PlayerJoinListener implements Listener
 		if(my != null)
 		{
 			Guild g = GuildsManager.getGuildManager().findPlayerGuild(my);
-			GuildPlayer gp = new GuildPlayer();
-			gp.setPlayer(e.getPlayer());
-			gp.setGuild(g);
-			gp.setRang(my.getRang());
+			GuildPlayer gp = new GuildPlayer(e.getPlayer(),my.getRang(),g);
 			g.playerLogIn(my, gp);
 		}
-		
 	}
-
 }

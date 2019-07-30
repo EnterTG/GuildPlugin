@@ -4,6 +4,13 @@ import org.bukkit.entity.Player;
 
 public class GuildPlayer {
 
+	public GuildPlayer(Player player, GuildRanks rang, Guild guild) {
+		super();
+		this.player = player;
+		this.rang = rang;
+		this.guild = guild;
+	}
+
 	/**
 	 * @return the player
 	 */
@@ -50,9 +57,5 @@ public class GuildPlayer {
 	private GuildRanks rang;
 	private Guild guild;
 	
-	public GuildPlayer()
-	{
-
-	}
 
 }
