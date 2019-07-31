@@ -85,8 +85,8 @@ public class DTO_GuildPlayer {
 	@Id
 	private int id;
 	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="OWNER_ID")
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="playerGuild")
 	private DTO_Guild guild;
 	
 	@Column

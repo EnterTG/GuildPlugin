@@ -11,7 +11,7 @@ public class GuildPlayerJoinServerListener implements Listener{
 	@EventHandler
 	public void onGuildPLayerJoin(GuildPlayerLogInEvent e)
 	{
-		
+		System.out.print("Player join");
 	}
 
 }

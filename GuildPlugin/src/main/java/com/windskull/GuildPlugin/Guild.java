@@ -113,4 +113,11 @@ public class Guild {
 		allGuildPlayers.add(gp);
 	}
 	
+	
+	
+	@Override
+	public String toString()
+	{
+		return String.format("Name %s Tag %s Opis %s", name,tag,description);
+	}
 }

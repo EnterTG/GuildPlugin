@@ -54,6 +54,10 @@ public class GuildPluginMain extends JavaPlugin{
 		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
 		pm.registerEvents(new PlayerJoinListener(), this);
 		
+		
+		loadGuild();
+		
+		disaplayAllGuilds();
 	}
 	
 	
@@ -83,5 +87,21 @@ public class GuildPluginMain extends JavaPlugin{
 		
 		
 		return super.onCommand(sender, command, label, args);
+	}
+
+
+
+	private void loadGuild()
+	{
+		GuildsManager gm = GuildsManager.getGuildManager();
+		eserver.find(DTO_Guild.class).findList().forEach( (DTO_Guild dg) -> gm.addNewGuild(DTOConverter.getGuildFromDTO(dg)));
+	}
+	
+	
+	private void disaplayAllGuilds()
+	{
+		GuildsManager gm = GuildsManager.getGuildManager();
+		gm.getAllGuild().forEach( g -> System.out.println(g.toString()));
+		
 	}
 }

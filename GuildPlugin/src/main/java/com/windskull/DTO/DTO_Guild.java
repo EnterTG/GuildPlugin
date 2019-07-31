@@ -2,8 +2,10 @@ package com.windskull.DTO;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -96,7 +98,7 @@ public class DTO_Guild {
 	private String opis;
 	
 	
-	@OneToMany(mappedBy = "guild", targetEntity = DTO_GuildPlayer.class)
+	@OneToMany(mappedBy = "guild", targetEntity = DTO_GuildPlayer.class, cascade = {CascadeType.ALL},fetch=FetchType.EAGER)
 	private List<DTO_GuildPlayer> allGuildPlayer;
 	
 	
