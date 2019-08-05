@@ -52,7 +52,7 @@ public class GuildPlayer {
 	public void setGuild(Guild guild) {
 		this.guild = guild;
 	}
-
+	public int id;
 	private Player player;
 	private GuildRanks rang;
 	private Guild guild;

@@ -60,30 +60,45 @@ public class GuildPluginMain extends JavaPlugin{
 		disaplayAllGuilds();
 	}
 	
+	@Override
+	public void onDisable()
+	{
+		GuildsManager.getGuildManager().getAllGuild().forEach(g -> eserver.update(DTOConverter.convertGuildToDTO(g)));
+	}
 	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
 	{
-		if(args.length >= 4)
-		{
+		
+			Player p = (Player)sender;
 			switch (args[0]) {
 			case "create":
+				if(args.length >= 4)
+				{
+					Guild g = new Guild();
+					g.setName(args[1]);
+					g.setOpis(args[2]);
+					g.setTag(args[3]);
+					
+					GuildPlayer gp = new GuildPlayer(p,GuildRanks.Owner,g);
+					g.addNewPlayer(gp);
+					
+					DTO_Guild dg = DTOConverter.convertGuildToDTO(g);
+					eserver.save(dg);
+					GuildsManager.getGuildManager().addNewGuild(DTOConverter.getGuildFromDTO(dg));
+					System.out.print("ID: " + dg.getId());
 				
-				Guild g = new Guild();
-				g.setName(args[1]);
-				g.setOpis(args[2]);
-				g.setTag(args[3]);
-				Player p = (Player)sender;
-				GuildPlayer gp = new GuildPlayer(p,GuildRanks.Owner,g);
-				g.addNewPlayer(gp);
-				GuildsManager.getGuildManager().addNewGuild(g);
-				eserver.save(DTOConverter.convertGuildToDTO(g));
+				}
 				break;
+			case "zmien":
+				Guild guild = GuildsManager.getGuildManager().getGuildPlayer(p).getGuild();
+				guild.setOpis("TEST");
+				disaplayAllGuilds();
 			default:
 				break;
 			}
-		}
+		
 		
 		
 		return super.onCommand(sender, command, label, args);

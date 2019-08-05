@@ -78,7 +78,7 @@ public class Guild {
 		this.allOfflinePlayer = allOfflinePlayer;
 	}
 	
-	
+	public int id;
 	private String name;
 	private String tag;
 	private String description;
@@ -106,7 +106,11 @@ public class Guild {
 	}
 	
 	
-	
+	public void playerLogOut(GuildPlayer p,DTO_GuildPlayer dtogp)
+	{
+		allGuildPlayers.remove(p);
+		allOfflinePlayer.add(dtogp);
+	}
 	
 	public void addNewPlayer(GuildPlayer gp)
 	{
