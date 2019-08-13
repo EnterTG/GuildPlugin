@@ -1,127 +1,102 @@
+
 package com.windskull.GuildPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.windskull.DTO.DTO_GuildPlayer;
-import com.windskull.Events.GuildPlayerLogInEvent;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="Guilds")
 public class Guild {
+    @Id
+    private int id;
+    @Column
+    private String name;
+    @Column
+    private String tag;
+    @Column
+    private String opis;
+    @OneToMany(mappedBy="guild", targetEntity=GuildPlayer.class, cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private List<GuildPlayer> allGuildPlayer = new ArrayList<GuildPlayer>();
+    
+    private List<GuildPlayer> allOnlineGuildPlayers = new ArrayList<GuildPlayer>();
+    
+    public int getId() {
+        return this.id;
+    }
 
-	
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTag() {
+        return this.tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getOpis() {
+        return this.opis;
+    }
+
+    public void setOpis(String opis) {
+        this.opis = opis;
+    }
+
+    public List<GuildPlayer> getAllGuildPlayer() {
+        return this.allGuildPlayer;
+    }
+
+    public void setAllGuildPlayer(List<GuildPlayer> allGuildPlayer) {
+        this.allGuildPlayer = allGuildPlayer;
+    }
+
+	public List<GuildPlayer> getAllOnlineGuildPlayers() {
+		return allOnlineGuildPlayers;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return the tag
-	 */
-	public String getTag() {
-		return tag;
-	}
-
-	/**
-	 * @param tag the tag to set
-	 */
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-
-	/**
-	 * @return the opis
-	 */
-	public String getOpis() {
-		return description;
-	}
-
-	/**
-	 * @param opis the opis to set
-	 */
-	public void setOpis(String opis) {
-		this.description = opis;
-	}
-
-	/**
-	 * @return the allGuildPlayers
-	 */
-	public List<GuildPlayer> getAllGuildPlayers() {
-		return allGuildPlayers;
-	}
-
-	/**
-	 * @param allGuildPlayers the allGuildPlayers to set
-	 */
-	public void setAllGuildPlayers(List<GuildPlayer> allGuildPlayers) {
-		this.allGuildPlayers = allGuildPlayers;
-	}
-	/**
-	 * @return the allOfflinePlayer
-	 */
-	public List<DTO_GuildPlayer> getAllOfflinePlayer() {
-		return allOfflinePlayer;
-	}
-
-	/**
-	 * @param allOfflinePlayer the allOfflinePlayer to set
-	 */
-	public void setAllOfflinePlayer(List<DTO_GuildPlayer> allOfflinePlayer) {
-		this.allOfflinePlayer = allOfflinePlayer;
+	public void setAllOnlineGuildPlayers(List<GuildPlayer> allOnlineGuildPlayers) {
+		this.allOnlineGuildPlayers = allOnlineGuildPlayers;
 	}
 	
-	public int id;
-	private String name;
-	private String tag;
-	private String description;
-	
-	
-	private List<GuildPlayer> allGuildPlayers;
-	private List<DTO_GuildPlayer> allOfflinePlayer;
 
-
-	public Guild() 
+	public void playerLogIn(GuildPlayer gp)
 	{
-		allGuildPlayers = new ArrayList<GuildPlayer>();
-		allOfflinePlayer = new ArrayList<>();
+		allOnlineGuildPlayers.add(gp);
+		gp.init();
+	}
+	public void addNewGuildPlayer(GuildPlayer guildPlayer)
+	{
+		allOnlineGuildPlayers.add(guildPlayer);
+		allGuildPlayer.add(guildPlayer);
 	}
 
-	public void playerLogIn(DTO_GuildPlayer dtogp ,GuildPlayer g)
-	{
-		allGuildPlayers.add(g);
-		allOfflinePlayer.remove(dtogp);
-		GuildPlayerLogInEvent e = new GuildPlayerLogInEvent();
-		e.setGuild(this);
-		e.setPlayer(g);
+	public void playerLogOut(GuildPlayer dgp) {
 		
-		GuildPluginMain.server.getPluginManager().callEvent(e);
+		allOnlineGuildPlayers.remove(dgp);
 	}
-	
-	
-	public void playerLogOut(GuildPlayer p,DTO_GuildPlayer dtogp)
+	public void removePlayerFromGuild(GuildPlayer gp)
 	{
-		allGuildPlayers.remove(p);
-		allOfflinePlayer.add(dtogp);
-	}
-	
-	public void addNewPlayer(GuildPlayer gp)
-	{
-		allGuildPlayers.add(gp);
-	}
-	
-	
-	
-	@Override
-	public String toString()
-	{
-		return String.format("Name %s Tag %s Opis %s", name,tag,description);
+		allOnlineGuildPlayers.remove(gp);
+		allGuildPlayer.remove(gp);
+		GuildPluginMain.eserver.delete(GuildPlayer.class, gp.getId());
 	}
 }
+

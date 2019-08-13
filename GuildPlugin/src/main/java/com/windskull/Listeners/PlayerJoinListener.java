@@ -5,8 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.windskull.Converters.DTOConverter;
-import com.windskull.DTO.DTO_GuildPlayer;
 import com.windskull.GuildPlugin.Guild;
 import com.windskull.GuildPlugin.GuildPlayer;
 import com.windskull.GuildPlugin.GuildPluginMain;
@@ -18,16 +16,15 @@ public class PlayerJoinListener implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
-		DTO_GuildPlayer my = GuildPluginMain.eserver.find(DTO_GuildPlayer.class).where().eq("playeruuid", e.getPlayer().getUniqueId()).findUnique();
-		if(my != null)
-		{
-			Guild g = GuildsManager.getGuildManager().findPlayerGuild(my);
-			
-			GuildPlayer gp = DTOConverter.getGuildPlayer(g, my);
-			//gp.id = my.getId();
-			g.playerLogIn(my, gp);
-			GuildsManager.getGuildManager().addGuildPlayer(e.getPlayer(),gp);
-		}
+
+        GuildPlayer my = (GuildPlayer)GuildPluginMain.eserver.find(GuildPlayer.class).where().eq("playeruuid", (Object)e.getPlayer().getUniqueId()).findUnique();
+        if (my != null) {
+            Guild g = GuildsManager.getGuildManager().findPlayerGuild(my);
+            //GuildPlayer gp = new GuildPlayer(e.getPlayer(), my.getRang(), g);
+            System.out.append("G " + g);
+            System.out.append("My " + my);
+            g.playerLogIn(my);
+        }
 	}
 	
 	@EventHandler
@@ -36,8 +33,7 @@ public class PlayerJoinListener implements Listener
 		GuildPlayer gp = GuildsManager.getGuildManager().getGuildPlayer(e.getPlayer());
 		if(gp != null)
 		{
-			DTO_GuildPlayer dgp =DTOConverter.convertGuildPlayerToDTO(DTOConverter.convertGuildToDTO(gp.getGuild()), gp);
-			gp.getGuild().playerLogOut(gp, dgp);
+			gp.getGuild().playerLogOut(gp);
 		}
 	}
 }

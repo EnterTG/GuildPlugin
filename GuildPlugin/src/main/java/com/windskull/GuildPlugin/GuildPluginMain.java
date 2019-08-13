@@ -10,10 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.avaje.ebean.EbeanServer;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
-import com.windskull.Converters.DTOConverter;
-import com.windskull.DTO.DTO_Guild;
-import com.windskull.DTO.DTO_GuildPlayer;
+import com.windskull.Inventory.Inventorys.Inventory_GuildMenu;
 import com.windskull.Listeners.GuildPlayerJoinServerListener;
+import com.windskull.Listeners.InventoryActionListener;
 import com.windskull.Listeners.PlayerJoinListener;
 import com.windskull.Managers.GuildsManager;
 
@@ -23,19 +22,21 @@ public class GuildPluginMain extends JavaPlugin{
 
 	public static Server server; 
 	public static EbeanServer eserver;
+	public static JavaPlugin main;
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable()
 	{
+		main = this;
 		EbeanManager manager = getServer().getServicesManager()
 				.getRegistration(EbeanManager.class)
 				.getProvider();
 		EbeanHandler handler = manager.getHandler(this);
 		if (handler.isNotInitialized()) 
 		{
-			handler.define(DTO_GuildPlayer.class);
-			handler.define(DTO_Guild.class);
+			handler.define(GuildPlayer.class);
+			handler.define(Guild.class);
 			try {
 				handler.initialize();
 			} catch(Exception e) {
@@ -53,6 +54,7 @@ public class GuildPluginMain extends JavaPlugin{
 		
 		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
 		pm.registerEvents(new PlayerJoinListener(), this);
+		pm.registerEvents(new InventoryActionListener(), this);
 		
 		
 		loadGuild();
@@ -63,44 +65,14 @@ public class GuildPluginMain extends JavaPlugin{
 	@Override
 	public void onDisable()
 	{
-		GuildsManager.getGuildManager().getAllGuild().forEach(g -> eserver.update(DTOConverter.convertGuildToDTO(g)));
+		GuildsManager.getGuildManager().getAllGuild().forEach(g -> eserver.update(g));
 	}
 	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
 	{
-		
-			Player p = (Player)sender;
-			switch (args[0]) {
-			case "create":
-				if(args.length >= 4)
-				{
-					Guild g = new Guild();
-					g.setName(args[1]);
-					g.setOpis(args[2]);
-					g.setTag(args[3]);
-					
-					GuildPlayer gp = new GuildPlayer(p,GuildRanks.Owner,g);
-					g.addNewPlayer(gp);
-					
-					DTO_Guild dg = DTOConverter.convertGuildToDTO(g);
-					eserver.save(dg);
-					GuildsManager.getGuildManager().addNewGuild(DTOConverter.getGuildFromDTO(dg));
-					System.out.print("ID: " + dg.getId());
-				
-				}
-				break;
-			case "zmien":
-				Guild guild = GuildsManager.getGuildManager().getGuildPlayer(p).getGuild();
-				guild.setOpis("TEST");
-				disaplayAllGuilds();
-			default:
-				break;
-			}
-		
-		
-		
+		((Player)sender).openInventory(new Inventory_GuildMenu((Player)sender).getInventory());
 		return super.onCommand(sender, command, label, args);
 	}
 
@@ -109,7 +81,7 @@ public class GuildPluginMain extends JavaPlugin{
 	private void loadGuild()
 	{
 		GuildsManager gm = GuildsManager.getGuildManager();
-		eserver.find(DTO_Guild.class).findList().forEach( (DTO_Guild dg) -> gm.addNewGuild(DTOConverter.getGuildFromDTO(dg)));
+		eserver.find(Guild.class).findList().forEach( (Guild dg) -> gm.addNewGuild(dg));
 	}
 	
 	

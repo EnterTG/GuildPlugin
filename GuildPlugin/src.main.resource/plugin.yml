@@ -2,8 +2,8 @@ version: 0.1
 name: Guilds
 main: com.windskull.GuildPlugin.GuildPluginMain
 database: true
+api-version: 1.14
 depend: [SimpleORM]
-load: STARTUP
 commands:
     guild:
        description: Main command for guild plugin
