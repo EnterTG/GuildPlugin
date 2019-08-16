@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.avaje.ebean.EbeanServer;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
-import com.windskull.Inventory.Inventorys.Inventory_GuildMenu;
+import com.windskull.Inventory.Inventories.Inventory_GuildMenu;
 import com.windskull.Listeners.GuildPlayerJoinServerListener;
 import com.windskull.Listeners.InventoryActionListener;
 import com.windskull.Listeners.PlayerJoinListener;

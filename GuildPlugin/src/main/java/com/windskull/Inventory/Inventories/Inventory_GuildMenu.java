@@ -1,4 +1,4 @@
-package com.windskull.Inventory.Inventorys;
+package com.windskull.Inventory.Inventories;
 
 import java.util.ArrayList;
 import java.util.Collection;
