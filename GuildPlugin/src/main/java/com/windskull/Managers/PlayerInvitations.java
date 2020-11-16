@@ -7,7 +7,7 @@ import com.windskull.GuildPlugin.Guild;
 
 public class PlayerInvitations {
 	
-	private List<Guild> guildsInvitation = new ArrayList<Guild>();
+	public List<Guild> guildsInvitation = new ArrayList<Guild>();
 	
 	public int getInvitationAmount()
 	{

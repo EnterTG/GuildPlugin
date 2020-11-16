@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name="Guilds")
 public class Guild {
@@ -60,6 +61,8 @@ public class Guild {
         this.opis = opis;
     }
 
+  
+    
     public List<GuildPlayer> getAllGuildPlayer() {
         return this.allGuildPlayer;
     }

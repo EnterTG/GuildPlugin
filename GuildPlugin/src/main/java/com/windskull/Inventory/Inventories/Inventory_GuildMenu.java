@@ -25,6 +25,11 @@ import com.windskull.Inventory.AnviGui.api.src.main.java.net.wesjd.anvilgui.Anvi
 import com.windskull.Items.ItemsCreator;
 import com.windskull.Items.SkullCreator;
 import com.windskull.Managers.GuildsManager;
+import com.windskull.Managers.PlayerInvitations;
+
+
+
+
 
 public class Inventory_GuildMenu extends InventoryGui
 {
@@ -33,7 +38,7 @@ public class Inventory_GuildMenu extends InventoryGui
 		
 		private String name;
 		private String tag;
-		
+			
 		private int page = 0;
 		
 		public GuildPlayer guildPlayer;
@@ -48,6 +53,8 @@ public class Inventory_GuildMenu extends InventoryGui
 
 		private void createInventory() {
 			if(inventory == null)this.inventory = Bukkit.createInventory((InventoryHolder)this, (int)36, (String)"Gildia");
+			clearInventory();
+			
 			if (this.guildPlayer == null) 
 				this.createInventory_NewGuild();
 			else if(guildPlayer.getRang().equals(GuildRanks.Owner))
@@ -82,7 +89,9 @@ public class Inventory_GuildMenu extends InventoryGui
 
 		
 		private void createInventory_NewGuild() {
-			this.setItem(13, ItemsCreator.getItemStack(Material.ENCHANTED_BOOK, "Stworz nowa gildie"), e -> this.openNameInput());
+			
+			this.setItem(13, ItemsCreator.getItemStack(Material.ENCHANTED_BOOK, GuildsManager._ItemsColorName + "Stworz nowa gildie"), e -> this.openNameInput());
+			this.setItem(22, ItemsCreator.getItemStack(Material.CHEST,GuildsManager._ItemsColorName +  "Zaproszenia"), e -> this.createInventory_Invitation());
 		}
 		
 		
@@ -90,7 +99,7 @@ public class Inventory_GuildMenu extends InventoryGui
 		private void createInventory_Member()
 		{
 			clearInventory();
-			this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER, "Opusc gildie"), e -> this.acceptLeaveGuild());
+			this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER,GuildsManager._ItemsColorName +  "Opusc gildie"), e -> this.acceptLeaveGuild());
 		}
 		
 		private void acceptLeaveGuild()
@@ -103,7 +112,7 @@ public class Inventory_GuildMenu extends InventoryGui
 		{
 			Guild g = guildPlayer.getGuild();
 			g.removePlayerFromGuild(guildPlayer);
-			g.getAllOnlineGuildPlayers().forEach(gp ->{ gp.getPlayer().sendMessage("Gracz " + player.getName() + " opuscil gildie");});
+			g.getAllOnlineGuildPlayers().forEach(gp ->{ gp.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Gracz " + player.getName() + " opuscil gildie");});
 			player.sendMessage("Opusciles gildie " + g.getName() );
 		}
 		
@@ -111,9 +120,9 @@ public class Inventory_GuildMenu extends InventoryGui
 		private void createInventory_Owner()
 		{
 			clearInventory();
-			this.setItem(11, ItemsCreator.getItemStack(Material.PLAYER_HEAD, "Dodaj gracza"), e -> this.createInventory_AddPlayer());
-			this.setItem(13, ItemsCreator.getItemStack(Material.SKELETON_SKULL, "Usun gracza"), e -> this.createInventory_DeletePlayer());
-			this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER, "Rozwiaz gildie"), e -> this.deleteGuildButton());
+			this.setItem(11, ItemsCreator.getItemStack(Material.PLAYER_HEAD,GuildsManager._ItemsColorName +  "Dodaj gracza"), e -> this.createInventory_AddPlayer());
+			this.setItem(13, ItemsCreator.getItemStack(Material.SKELETON_SKULL,GuildsManager._ItemsColorName +  "Usun gracza"), e -> this.createInventory_DeletePlayer());
+			this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER,GuildsManager._ItemsColorName +  "Rozwiaz gildie"), e -> this.deleteGuildButton());
 		}
 
 		private void deleteGuildButton()
@@ -123,12 +132,12 @@ public class Inventory_GuildMenu extends InventoryGui
 				if (text.equals(code))
 				{
 					deleteGuild();
-					player.sendMessage("Gildia zostala usunieta");
+					player.sendMessage(GuildsManager._GlobalPrefix +"Gildia zostala usunieta");
 					return AnvilGUI.Response.close();
 				}
 				else 
 				{
-					player.sendMessage("Kod niepoprawny");
+					player.sendMessage(GuildsManager._GlobalPrefix + "Kod niepoprawny");
 					deleteGuildButton();
 					return AnvilGUI.Response.close();
 				}
@@ -141,7 +150,7 @@ public class Inventory_GuildMenu extends InventoryGui
 			EbeanServer server = GuildPluginMain.eserver;
 			GuildsManager gm = GuildsManager.getGuildManager();
 			g.getAllOnlineGuildPlayers().forEach(p ->{
-				p.getPlayer().sendMessage("Twoja gildia zostala rozwiazana");
+				p.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Twoja gildia zostala rozwiazana");
 				gm.deleteGuildPlayer(p);});
 			g.getAllGuildPlayer().forEach(p -> server.delete(GuildPlayer.class,p.getId()));
 			
@@ -171,13 +180,13 @@ public class Inventory_GuildMenu extends InventoryGui
 			IntStream.range(0, newList.size()).forEach( 
 					i -> this.setItem(playerContainer[i], ItemsCreator.getPlayerHead(Bukkit.getPlayer(newList.get(i).getPlayeruuid()),"LPM + Shift zeby usunac"),
 					e ->{ if(e.isShiftClick() && e.isLeftClick()) deletePlayer(newList.get(i));}));
-			buttons_AddPlayer(() -> draw_AddPlayersContainer());
+			buttons_NextPrevPage(() -> draw_AddPlayersContainer());
 		}
 		
 		private void deletePlayer(GuildPlayer p)
 		{
 			Player player = Bukkit.getPlayer(p.getPlayeruuid());
-			if(player != null) player.sendMessage("Zostales usuniety z gildi");
+			if(player != null) player.sendMessage(GuildsManager._GlobalPrefix + "Zostales usuniety z gildi");
 			GuildsManager.getGuildManager().deleteGuildPlayer(p);
 			p.getGuild().removePlayerFromGuild(p);
 			GuildPluginMain.eserver.delete(GuildPlayer.class,p.getId());
@@ -185,11 +194,51 @@ public class Inventory_GuildMenu extends InventoryGui
 		}
 		
 		
+		private void createInventory_Invitation()
+		{
+			clearInventory();
+			IntStream.range(0, inventory.getSize()).forEach(i -> this.setItem(i, ItemsCreator.getClean(Material.GRAY_STAINED_GLASS_PANE)));
+			GuildsManager kwp = GuildsManager.getGuildManager();
+			PlayerInvitations pi = kwp.getPlayerInvitation(player);
+			if(pi != null)
+			{
+
+				this.setItem(8, ItemsCreator.getItemStack(Material.PLAYER_HEAD, GuildsManager._ItemsColorName +"Wyszukaj gracza"), e -> openAddPlayerSearch());
+				
+				Collection<Guild> playersOnline =  pi.guildsInvitation;
+				List<? extends Guild> newList = playersOnline.stream()
+						.collect(Collectors.toCollection(ArrayList::new)).subList( page *14 , playersOnline.size() > ((page +1)* 14) ? ((page +1)* 14) : playersOnline.size());
+				IntStream.range(0, newList.size())
+				.forEach( i -> this.setItem(playerContainer[i], ItemsCreator.getItemStack(Material.NETHER_STAR,GuildsManager._ItemsColorName +"LPM zeby dolaczyc"),e ->setGuild(newList.get(i))));
+				buttons_NextPrevPage(() -> createInventory_Invitation());
+			
+			}
+			this.setItem(35, 
+					this.getSkullItem("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWNhZDE5M2UyMjI2OTcxZWQ5NTMwMmRiYTQzMzQzOGJlNDY0NGZiYWI1ZWJmODE4MDU0MDYxNjY3ZmJlMiJ9fX0=",
+							"Poprzednia strona")
+					, e -> createInventory());
+		}
+		
+		private void setGuild(Guild g)
+		{
+			GuildPlayer gp = new GuildPlayer(player, GuildRanks.Member, g);
+			gp.init();
+			sendMessageToAllGuildPlayers(g,GuildsManager._GlobalPrefix +"Gracz: " + player.getName() + " dolaczyl do gildi.");
+			g.addNewGuildPlayer(gp);
+			GuildsManager kwp = GuildsManager.getGuildManager();
+			kwp.playersInvitations.remove(player);
+			createInventory();
+		}
+		
+	  public void sendMessageToAllGuildPlayers(Guild g,String message)
+	    {
+	    	g.getAllOnlineGuildPlayers().forEach(p -> p.getPlayer().sendMessage(message));
+	    }
 		private void createInventory_AddPlayer()
 		{
 			clearInventory();
 			IntStream.range(0, inventory.getSize()).forEach(i -> this.setItem(i, ItemsCreator.getClean(Material.GRAY_STAINED_GLASS_PANE)));
-			this.setItem(8, ItemsCreator.getItemStack(Material.PLAYER_HEAD, "Wyszukaj gracza"), e -> openAddPlayerSearch());
+			this.setItem(8, ItemsCreator.getItemStack(Material.PLAYER_HEAD, GuildsManager._ItemsColorName +"Wyszukaj gracza"), e -> openAddPlayerSearch());
 			draw_AddPlayersContainer();
 			this.setItem(35, 
 					this.getSkullItem("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjdhYWNhZDE5M2UyMjI2OTcxZWQ5NTMwMmRiYTQzMzQzOGJlNDY0NGZiYWI1ZWJmODE4MDU0MDYxNjY3ZmJlMiJ9fX0=",
@@ -202,7 +251,7 @@ public class Inventory_GuildMenu extends InventoryGui
 			Collection<? extends Player> playersOnline = GuildPluginMain.server.getOnlinePlayers();
 			List<? extends Player> newList = playersOnline.stream().collect(Collectors.toCollection(ArrayList::new)).subList( page *14 , playersOnline.size() > ((page +1)* 14) ? ((page +1)* 14) : playersOnline.size());
 			IntStream.range(0, newList.size()).forEach( i -> this.setItem(playerContainer[i], ItemsCreator.getPlayerHead(newList.get(i),"LPM zeby zaprosic"),e ->sendInvitation(playerContainer[i],newList.get(i))));
-			buttons_AddPlayer(() -> draw_AddPlayersContainer());
+			buttons_NextPrevPage(() -> draw_AddPlayersContainer());
 		}
 		
 		public void sendInvitation(int i,Player p)
@@ -211,17 +260,18 @@ public class Inventory_GuildMenu extends InventoryGui
 			GuildsManager kwp = GuildsManager.getGuildManager();
 			if(gp == null) 
 			{
-				if(kwp.getInvitationSize(p) >= 21)
-					player.sendMessage("Gracz nie ma miejsca na zaproszenia");
+				if(kwp.getInvitationSize(p) >= 14)
+					player.sendMessage(GuildsManager._GlobalPrefix +"Gracz nie ma miejsca na zaproszenia");
 				else
 				{
-					player.sendMessage("Zaproszenie zostało wysłane");
-					kwp.addGuildInvitation(p, gp.getGuild());
+					player.sendMessage(GuildsManager._GlobalPrefix +"Zaproszenie zostało wysłane");
+					kwp.addGuildInvitation(p, guildPlayer.getGuild());
+					p.sendMessage(GuildsManager._GlobalPrefix +"Otrzymales zaproszenie do gildi: " + guildPlayer.getGuild().getName());
 					
 				}
 			}
 			else
-				player.sendMessage((String)"Gracz posiada gildie");
+				player.sendMessage(GuildsManager._GlobalPrefix +(String)"Gracz posiada gildie");
 			buttons.remove(i);
 		}
 		
@@ -233,7 +283,7 @@ public class Inventory_GuildMenu extends InventoryGui
 			public void execute();
 		}
 
-		private void buttons_AddPlayer(pageButton p)
+		private void buttons_NextPrevPage(pageButton p)
 		{
 			ItemStack arrowright;
 			int allPlayers = GuildPluginMain.server.getOnlinePlayers().size();
@@ -282,11 +332,11 @@ public class Inventory_GuildMenu extends InventoryGui
 					if(gp == null) 
 					{
 						if(kwp.getInvitationSize(p)  >= 21)
-							player.sendMessage("Gracz nie ma miejsca na zaproszenia");
+							player.sendMessage(GuildsManager._GlobalPrefix +"Gracz nie ma miejsca na zaproszenia");
 						else
 						{
-							player.sendMessage("Zaproszenie zostało wysłane");
-							kwp.addGuildInvitation(p, gp.getGuild());
+							player.sendMessage(GuildsManager._GlobalPrefix +"Zaproszenie zostało wysłane");
+							kwp.addGuildInvitation(p, guildPlayer.getGuild());
 						}
 						AnvilGUI.Response.close();
 					}
@@ -299,7 +349,7 @@ public class Inventory_GuildMenu extends InventoryGui
 		}
 		
 		private void openNameInput() {
-			new AnvilGUI.Builder().onClose(player -> {if(this.name == null)player.sendMessage("Tworznie gildi przerwane");}).onComplete((player, text) -> {
+			new AnvilGUI.Builder().onClose(player -> {if(this.name == null)player.sendMessage(GuildsManager._GlobalPrefix +"Tworzenie gildi przerwane");}).onComplete((player, text) -> {
 				if (text.length() > 3 && text.length() <= 20)
 					
 					if (!GuildsManager.getGuildManager().isGuildExist((String)text)) {
@@ -315,13 +365,13 @@ public class Inventory_GuildMenu extends InventoryGui
 		}
 
 		private void openTagInput() {
-			new AnvilGUI.Builder().onClose(player -> {if(this.tag == null)player.sendMessage("Tworznie gildi przerwane");}).onComplete((player, text) -> {
+			new AnvilGUI.Builder().onClose(player -> {if(this.tag == null)player.sendMessage(GuildsManager._GlobalPrefix +"Tworzenie gildi przerwane");}).onComplete((player, text) -> {
 				if (text.length() >= 2 && text.length() <= 4 )
 					if (!GuildsManager.getGuildManager().isTAGExist((String)text)) {
 						this.tag = text;
 						
 						createGuild();
-						player.sendMessage("Brawo stworzyles gildie");
+						player.sendMessage(GuildsManager._GlobalPrefix +"Brawo stworzyles gildie");
 						return AnvilGUI.Response.close();
 					}
 					else

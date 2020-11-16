@@ -29,10 +29,11 @@ public class GuildPluginMain extends JavaPlugin{
 	public void onEnable()
 	{
 		main = this;
+		;
 		EbeanManager manager = getServer().getServicesManager()
 				.getRegistration(EbeanManager.class)
 				.getProvider();
-		EbeanHandler handler = manager.getHandler(this);
+		EbeanHandler handler = manager.getHandler(this);//EbeanManager.DEFAULT.getHandler(this);//
 		if (handler.isNotInitialized()) 
 		{
 			handler.define(GuildPlayer.class);
@@ -45,6 +46,7 @@ public class GuildPluginMain extends JavaPlugin{
 				return;
 			}
 		}
+		
 		handler.reflect();
 		handler.install();
 		eserver = handler.getServer();

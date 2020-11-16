@@ -11,11 +11,17 @@ import org.bukkit.entity.Player;
 import com.windskull.GuildPlugin.Guild;
 import com.windskull.GuildPlugin.GuildPlayer;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class GuildsManager {
+	
+	
+	public static String _GlobalPrefix = ChatColor.translateAlternateColorCodes('&',"&6[&7Guilds&6]&7 ");
+	public static ChatColor _ItemsColorName = ChatColor.GRAY;
 	private static GuildsManager gm;
 	private List<Guild> allGuilds = new ArrayList<Guild>();
 	private Map<Player, GuildPlayer> allGuildPlayers = new HashMap<Player, GuildPlayer>();
-	private Map<Player, PlayerInvitations> playersInvitations = new HashMap<Player, PlayerInvitations>();
+	public Map<Player, PlayerInvitations> playersInvitations = new HashMap<Player, PlayerInvitations>();
 	private GuildsManager() {
 	}
 	public void deleteGuild(Guild g)
@@ -88,6 +94,11 @@ public class GuildsManager {
 			pi.addInvitation(g);
 			playersInvitations.put(p, pi);
 		}
+	}
+	
+	public PlayerInvitations getPlayerInvitation(Player p)
+	{
+		return playersInvitations.get(p);
 	}
 	
 	public int getInvitationSize(Player p)

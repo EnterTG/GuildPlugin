@@ -35,10 +35,10 @@ public class VersionMatcher {
 	 */
 	public VersionWrapper match() {
 		try {
-			return versions.stream()
+			return Wrapper1_14_R1.class.newInstance(); /*versions.stream()
 					.filter(version -> version.getSimpleName().substring(7).equals(serverVersion))
 					.findFirst().orElseThrow(() -> new RuntimeException("Your server version isn't supported in AnvilGUI!"))
-					.newInstance();
+					.newInstance();*/
 		} catch (IllegalAccessException | InstantiationException ex) {
 			throw new RuntimeException(ex);
 		}

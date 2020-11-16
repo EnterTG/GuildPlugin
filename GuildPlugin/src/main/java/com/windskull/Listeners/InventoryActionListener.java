@@ -16,6 +16,7 @@ public class InventoryActionListener implements Listener{
 	{
 		if(e.getInventory().getHolder() instanceof InventoryGui)
 		{
+			
 			InventoryGui i = (InventoryGui) e.getInventory().getHolder();
 			e.setCancelled(i.onInventoryGuiClick((Player) e.getWhoClicked(), e.getSlot(), e.getInventory().getItem(e.getSlot())));
 			i.getButton(e.getSlot()).onClick(e);

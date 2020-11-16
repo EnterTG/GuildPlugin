@@ -9,6 +9,21 @@
 
   <name>GuildPlugin</name>
   <url>http://maven.apache.org</url>
+<repositories>
+    <!-- This adds the Spigot Maven repository to the build -->
+    <repository>
+        <id>spigot-repo</id>
+        <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+	</repository>
+	<repository>
+            <id>i7mc_repository</id>
+            <url>http://repository.i7mc.com:8008/</url>
+        </repository>
+</repositories>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,32 +36,49 @@
       <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.avaje.ebeanorm/avaje-ebeanorm -->
-	<dependency>
+
+    
+ <dependency>
 	    <groupId>org.avaje.ebeanorm</groupId>
 	    <artifactId>avaje-ebeanorm</artifactId>
 	    <version>8.1.1</version>
 	</dependency>
-    
+	<dependency>
+	    <groupId>org.spigotmc</groupId>
+         <artifactId>spigot-api</artifactId>
+          <version>1.16.4-R0.1-SNAPSHOT</version>
+	    <scope>system</scope>
+	    <systemPath>D:\Minecraft server\spigot-1.16.4.jar</systemPath>
+	</dependency>
+
+
+	<dependency>
+	    <groupId>com.mengcraft</groupId>
+	    <artifactId>simpleorm</artifactId>
+	    <version>1.4-SNAPSHOT</version>
+	    <scope>system</scope>
+	    <systemPath>C:\Users\WindSkull\eclipse-workspace\SimpleORM\target\simpleorm-1.4-SNAPSHOT.jar</systemPath>
+	</dependency>
   </dependencies>
 
 
   <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>
+         <resources>
+            <resource>
+                <directory>src/main/resource</directory>
+                <filtering>true</filtering> 
+            </resource>
+        </resources>
   </build>
 </project>
