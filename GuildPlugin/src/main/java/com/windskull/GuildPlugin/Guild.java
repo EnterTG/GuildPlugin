@@ -12,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
 
 @Entity
 @Table(name="Guilds")
@@ -26,6 +29,21 @@ public class Guild {
     private String opis;
     @OneToMany(mappedBy="guild", targetEntity=GuildPlayer.class, cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private List<GuildPlayer> allGuildPlayer = new ArrayList<GuildPlayer>();
+    
+    @Column
+    private String guildRegionId;
+    
+    @Column
+    private int guildLoc_X;
+    @Column
+    private int guildLoc_Y;
+    @Column
+    private int guildLoc_Z;
+    @Column
+    private String worldName;
+    @Column
+    private int guildLevel;
+    
     
     private List<GuildPlayer> allOnlineGuildPlayers = new ArrayList<GuildPlayer>();
     
@@ -100,6 +118,68 @@ public class Guild {
 		allOnlineGuildPlayers.remove(gp);
 		allGuildPlayer.remove(gp);
 		GuildPluginMain.eserver.delete(GuildPlayer.class, gp.getId());
+	}
+
+	public String getGuildRegionId() {
+		return guildRegionId;
+	}
+
+	public void setGuildRegionId(String guildRegionId) {
+		this.guildRegionId = guildRegionId;
+	}
+
+	public int getGuildLevel() {
+		return guildLevel;
+	}
+
+	public void setGuildLevel(int guildLevel) {
+		this.guildLevel = guildLevel;
+	}
+	
+	public void setGuildLocation(Location loc)
+	{
+		setGuildLoc_X(loc.getBlockX());
+		setGuildLoc_Y(loc.getBlockY());
+		setGuildLoc_Z(loc.getBlockZ());
+		setWorldName(loc.getWorld().getName());
+		
+	}
+	
+	public Location getGuildLocation()
+	{
+		return new Location(Bukkit.getWorld(getWorldName()), getGuildLoc_X(), getGuildLoc_Y(), getGuildLoc_Z());
+	}
+	
+	public int getGuildLoc_X() {
+		return guildLoc_X;
+	}
+
+	public void setGuildLoc_X(int guildLoc_X) {
+		this.guildLoc_X = guildLoc_X;
+	}
+
+	public int getGuildLoc_Y() {
+		return guildLoc_Y;
+	}
+
+	public void setGuildLoc_Y(int guildLoc_Y) {
+		this.guildLoc_Y = guildLoc_Y;
+	}
+
+	public int getGuildLoc_Z() {
+		return guildLoc_Z;
+	}
+
+	public void setGuildLoc_Z(int guildLoc_Z) {
+		this.guildLoc_Z = guildLoc_Z;
+	}
+
+	public String getWorldName() {
+		return worldName;
+	}
+
+	public void setWorldName(String worldName) {
+		this.worldName = worldName;
 	}
 }
 

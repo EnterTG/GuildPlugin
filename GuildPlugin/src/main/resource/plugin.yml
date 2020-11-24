@@ -4,6 +4,7 @@ main: com.windskull.GuildPlugin.GuildPluginMain
 database: true
 api-version: 1.14
 depend: [SimpleORM]
+softdepend: [WorldEdit, WorldGuard]
 commands:
-    guild:
+    guilds:
        description: Main command for guild plugin

@@ -10,7 +10,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.avaje.ebean.EbeanServer;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
-import com.windskull.Inventory.Inventories.Inventory_GuildMenu;
+import com.windskull.Inventory.Inventories.Inventory_GuildMenu_Member;
+import com.windskull.Inventory.Inventories.Inventory_GuildMenu_NewPlayer;
+import com.windskull.Inventory.Inventories.Inventory_GuildMenu_Owner;
 import com.windskull.Listeners.GuildPlayerJoinServerListener;
 import com.windskull.Listeners.InventoryActionListener;
 import com.windskull.Listeners.PlayerJoinListener;
@@ -74,7 +76,17 @@ public class GuildPluginMain extends JavaPlugin{
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
 	{
-		((Player)sender).openInventory(new Inventory_GuildMenu((Player)sender).getInventory());
+		Player player = ((Player)sender);
+		GuildPlayer guildPlayer = GuildsManager.getGuildManager().getGuildPlayer(player);
+		if (guildPlayer == null) 
+			player.openInventory(new Inventory_GuildMenu_NewPlayer(player).getInventory());
+		else if(guildPlayer.getRang().equals(GuildRanks.Owner))
+			player.openInventory(new Inventory_GuildMenu_Owner(player).getInventory());
+		else
+			player.openInventory(new Inventory_GuildMenu_Member(player).getInventory());
+		
+		
+		//((Player)sender).openInventory(new Inventory_GuildMenu((Player)sender).getInventory());
 		return super.onCommand(sender, command, label, args);
 	}
 

@@ -15,9 +15,13 @@ import net.md_5.bungee.api.ChatColor;
 
 public class GuildsManager {
 	
-	
+	public static String _GuidlPermissionItemName = "Prawo zajecia ziemi";
 	public static String _GlobalPrefix = ChatColor.translateAlternateColorCodes('&',"&6[&7Guilds&6]&7 ");
-	public static ChatColor _ItemsColorName = ChatColor.GRAY;
+	public static ChatColor _ItemsColorNamePrimal = ChatColor.GRAY;
+	public static ChatColor _ItemsColorNameSecond = ChatColor.GOLD;
+	
+	public static final int _MaxGuildLvl = 2;
+	
 	private static GuildsManager gm;
 	private List<Guild> allGuilds = new ArrayList<Guild>();
 	private Map<Player, GuildPlayer> allGuildPlayers = new HashMap<Player, GuildPlayer>();

@@ -20,7 +20,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 
 
-public class ItemsCreator {
+public class ItemsCreator 
+{
+	
 	public static ItemStack getClean(Material mat) {
 		return ItemsCreator.getItemStack(mat, " ");
 	}
