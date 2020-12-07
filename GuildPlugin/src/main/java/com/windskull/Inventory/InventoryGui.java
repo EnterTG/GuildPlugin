@@ -1,13 +1,3 @@
-/*
- * Decompiled with CFR 0.145.
- * 
- * Could not load the following classes:
- *  org.bukkit.entity.Player
- *  org.bukkit.event.inventory.InventoryClickEvent
- *  org.bukkit.inventory.Inventory
- *  org.bukkit.inventory.InventoryHolder
- *  org.bukkit.inventory.ItemStack
- */
 package com.windskull.Inventory;
 
 import java.util.HashMap;
@@ -30,6 +20,9 @@ implements InventoryHolder {
 
     public abstract boolean onInventoryClose(Player var1);
 
+    public abstract boolean blockPlayerInventoryClick();
+    
+    
     public Inventory getInventory() {
         return this.inventory;
     }

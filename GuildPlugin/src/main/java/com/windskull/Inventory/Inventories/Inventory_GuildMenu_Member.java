@@ -24,6 +24,7 @@ public class Inventory_GuildMenu_Member extends Inventory_GuildMenu {
 	{
 		clearInventory();
 		this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER,GuildsManager._ItemsColorNamePrimal +  "Opusc gildie"), e -> this.acceptLeaveGuild());
+		this.setItem(0, ItemsCreator.getItemStack(Material.CHEST,GuildsManager._ItemsColorNamePrimal +  "Storage"),e -> player.openInventory(GuildsManager.getGuildManager().getGuildManager(guildPlayer.getGuild()).storage.getInventory()));
 	}
 	
 	

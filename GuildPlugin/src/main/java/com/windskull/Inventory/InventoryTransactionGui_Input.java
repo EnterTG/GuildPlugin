@@ -48,7 +48,11 @@ extends InventoryTransactionGui {
     private void grabInput() {
         System.out.print(this.output);
     }
-
+	 @Override
+	public boolean blockPlayerInventoryClick() {
+		// TODO Auto-generated method stub
+		return true;
+	}
     @Override
     public boolean onInventoryGuiClick(Player whoClicked, int slot, ItemStack clickedItem) {
         return true;

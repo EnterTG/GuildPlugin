@@ -15,6 +15,7 @@ import com.windskull.Inventory.Inventories.Inventory_GuildMenu_NewPlayer;
 import com.windskull.Inventory.Inventories.Inventory_GuildMenu_Owner;
 import com.windskull.Listeners.GuildPlayerJoinServerListener;
 import com.windskull.Listeners.InventoryActionListener;
+import com.windskull.Listeners.PlayerInteractWithBlock;
 import com.windskull.Listeners.PlayerJoinListener;
 import com.windskull.Managers.GuildsManager;
 
@@ -39,6 +40,7 @@ public class GuildPluginMain extends JavaPlugin{
 		if (handler.isNotInitialized()) 
 		{
 			handler.define(GuildPlayer.class);
+			handler.define(GuildStorage.class);
 			handler.define(Guild.class);
 			try {
 				handler.initialize();
@@ -52,14 +54,13 @@ public class GuildPluginMain extends JavaPlugin{
 		handler.reflect();
 		handler.install();
 		eserver = handler.getServer();
-		
 		server = this.getServer();
 		PluginManager pm = server.getPluginManager();
 		
 		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
 		pm.registerEvents(new PlayerJoinListener(), this);
 		pm.registerEvents(new InventoryActionListener(), this);
-		
+		pm.registerEvents(new PlayerInteractWithBlock(), this);
 		
 		loadGuild();
 		
@@ -69,7 +70,15 @@ public class GuildPluginMain extends JavaPlugin{
 	@Override
 	public void onDisable()
 	{
-		GuildsManager.getGuildManager().getAllGuild().forEach(g -> eserver.update(g));
+		GuildsManager guildsManager =GuildsManager.getGuildManager();
+		//Map<Guild,GuildManager> guildsmanagers = guildsManager.getAllGuildsManagers();
+		guildsManager.getAllGuild().forEach(g -> 
+		{
+			guildsManager.getAllGuildsManagers().get(g).save();
+			g.updateGuildBuildings();
+			eserver.update(g);
+			System.out.println(g.getFullString());
+		});
 	}
 	
 	
@@ -95,7 +104,7 @@ public class GuildPluginMain extends JavaPlugin{
 	private void loadGuild()
 	{
 		GuildsManager gm = GuildsManager.getGuildManager();
-		eserver.find(Guild.class).findList().forEach( (Guild dg) -> gm.addNewGuild(dg));
+		eserver.find(Guild.class).findList().forEach( (Guild dg) ->{ gm.addNewGuild(dg); dg.mapGuildBuildings();});
 	}
 	
 	

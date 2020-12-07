@@ -37,10 +37,10 @@ public abstract class Inventory_GuildMenu extends InventoryGui
 		public Inventory_GuildMenu(Player p) {
 			this.player = p;
 			this.guildPlayer = GuildsManager.getGuildManager().getGuildPlayer(p);
-			this.createInventory();
+			this.initInventory();
 		}
 
-		private void createInventory() {
+		protected void initInventory() {
 			if(inventory == null)this.inventory = Bukkit.createInventory((InventoryHolder)this, (int)36, (String)"Gildia");	
 			//clearInventory();
 		}
@@ -60,6 +60,10 @@ public abstract class Inventory_GuildMenu extends InventoryGui
 			return false;
 		}
 
+		@Override
+		public boolean blockPlayerInventoryClick() {
+			return true;
+		}
 		
 		protected void clearInventory()
 		{

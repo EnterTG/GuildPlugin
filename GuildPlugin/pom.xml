@@ -37,8 +37,15 @@
       <scope>test</scope>
     </dependency>
 
-    
- <dependency>
+
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.18.16</version>
+		<scope>provided</scope>
+	</dependency>
+
+ 	<dependency>
 	    <groupId>org.avaje.ebeanorm</groupId>
 	    <artifactId>avaje-ebeanorm</artifactId>
 	    <version>8.1.1</version>
@@ -73,6 +80,20 @@
 	    <version>7.2.0</version>
 	    <scope>system</scope>
 	    <systemPath>D:\Minecraft server\plugins\FastAsyncWorldEdit-1.16-444.jar</systemPath>
+	</dependency>
+	<dependency>
+	    <groupId>com.Essentials</groupId>
+	    <artifactId>Essentials</artifactId>
+	    <version>2.18.1.0</version>
+	    <scope>system</scope>
+	    <systemPath>D:\Minecraft server\plugins\EssentialsX-2.18.1.0.jar</systemPath>
+	</dependency>
+	<dependency>
+	    <groupId>com.ProtocolLib</groupId>
+	    <artifactId>ProtocolLib</artifactId>
+	    <version>1</version>
+	    <scope>system</scope>
+	    <systemPath>D:\Minecraft server\plugins\ProtocolLib.jar</systemPath>
 	</dependency>
 	<!-- <dependency>
 	    <groupId>com.edit</groupId>

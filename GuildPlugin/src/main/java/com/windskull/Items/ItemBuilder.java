@@ -1,6 +1,11 @@
 package com.windskull.Items;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,8 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
-
-import java.util.*;
 
 /**
  * NOTICE: This utility was developer as part of AeolusLib. While you can use it for your own projects, You are NOT allowed to delete or move this header comment.
@@ -26,6 +29,7 @@ import java.util.*;
  * @version 1.0
  */
 
+@SuppressWarnings("deprecation")
 public class ItemBuilder {
 
     private final ItemStack item;
@@ -155,7 +159,8 @@ public class ItemBuilder {
      * @return the current instance for chainable application.
      * @since 1.0
      */
-    public ItemBuilder durability(final int durability){
+
+	public ItemBuilder durability(final int durability){
         make().setDurability((short) durability);
         return this;
     }
@@ -169,7 +174,7 @@ public class ItemBuilder {
      * @return the current instance for chainable application.
      * @since 1.0
      */
-    @SuppressWarnings("deprecation")
+
     public ItemBuilder data(final int data){
         make().setData(new MaterialData(make().getType(), (byte)data));
         return this;
@@ -350,7 +355,7 @@ public class ItemBuilder {
      * @return the current instance for chainable application
      * @since 1.0
      */
-    public ItemBuilder skullOwner(final String name){
+	public ItemBuilder skullOwner(final String name){
         if(make().getType() == Material.LEGACY_SKULL_ITEM && make().getDurability() == (byte) 3){
             SkullMeta skullMeta = (SkullMeta) meta();
             skullMeta.setOwner(name);

@@ -101,7 +101,7 @@ public class GuildPlayer {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		/*if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
@@ -113,9 +113,30 @@ public class GuildPlayer {
 				return false;
 		} else if (!playeruuid.equals(other.playeruuid))
 			return false;
-		return true;
+		return true; */
+		if(obj instanceof GuildPlayer)
+		{
+			try
+			{
+				return playeruuid.equals(((GuildPlayer) obj).playeruuid);
+			}
+			catch(Exception e)
+			{
+				return false;
+			}
+		}
+		return false;
+		
 	}
-    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	return "Player ID: " + id + System.lineSeparator() +
+    			"Player UUID: " + playeruuid + System.lineSeparator() +
+    			"Guild ID: " + guild.getId() + System.lineSeparator() +
+    			"Rang: " + rang + System.lineSeparator() ;
+    }
 
+	
 }
 

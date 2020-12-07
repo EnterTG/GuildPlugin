@@ -1,4 +1,4 @@
-
+	
 package com.windskull.GuildPlugin;
 
 import java.util.ArrayList;
@@ -11,14 +11,34 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import com.windskull.Misc.GuildDataBaseFunctions;
+import com.windskull.Wars.GuildWarPreapare;
+
 
 @Entity
 @Table(name="Guilds")
-public class Guild {
+public class Guild 
+{
+	
+	public class TMP_GuildBuilding
+	{
+		
+		
+		public String buildingName;
+		public TMP_GuildBuilding(String buildingName, int buildingLevel) {
+			super();
+			this.buildingName = buildingName;
+			this.buildingLevel = buildingLevel;
+		}
+		public int buildingLevel;
+	}
+	
+	
     @Id
     private int id;
     @Column
@@ -30,6 +50,8 @@ public class Guild {
     @OneToMany(mappedBy="guild", targetEntity=GuildPlayer.class, cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     private List<GuildPlayer> allGuildPlayer = new ArrayList<GuildPlayer>();
     
+    @OneToMany(mappedBy="guild", targetEntity=GuildStorage.class, cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+    private List<GuildStorage> allGuildStorage = new ArrayList<GuildStorage>();
     @Column
     private String guildRegionId;
     
@@ -41,11 +63,38 @@ public class Guild {
     private int guildLoc_Z;
     @Column
     private String worldName;
+
     @Column
     private int guildLevel;
     
+    @Column(columnDefinition = "integer default 1000")
+    private int mmr;
     
+    @Column
+    private String guildBuildings;
+   /* @DbJsonB
+    Map<String,Integer> guildBuildings;*/
+    @Transient
     private List<GuildPlayer> allOnlineGuildPlayers = new ArrayList<GuildPlayer>();
+    @Transient
+    public List<TMP_GuildBuilding> guildBuildingsMaped = new ArrayList<Guild.TMP_GuildBuilding>();
+    @Transient
+    public GuildWarPreapare guildWars = new GuildWarPreapare(this);
+    
+    
+    
+   // @PreUpdate
+    public void updateGuildBuildings()
+    {
+    	GuildDataBaseFunctions.updateGuildBuildings(this, getGuildBuildingsMaped());
+    }
+    //@PostLoad
+    public void mapGuildBuildings()
+    {
+    	GuildDataBaseFunctions.mapGuildBuildings(this, getGuildBuildings(), getGuildBuildingsMaped());
+    }
+    
+
     
     public int getId() {
         return this.id;
@@ -97,18 +146,19 @@ public class Guild {
 		this.allOnlineGuildPlayers = allOnlineGuildPlayers;
 	}
 	
+	public List<GuildStorage> getAllGuildStorage() {
+		return this.allGuildStorage;
+	}
 
+	public void setAllGuildStorage(List<GuildStorage> allGuildStorage) {
+		this.allGuildStorage = allGuildStorage;
+	}
+	
 	public void playerLogIn(GuildPlayer gp)
 	{
 		allOnlineGuildPlayers.add(gp);
 		gp.init();
 	}
-	public void addNewGuildPlayer(GuildPlayer guildPlayer)
-	{
-		allOnlineGuildPlayers.add(guildPlayer);
-		allGuildPlayer.add(guildPlayer);
-	}
-
 	public void playerLogOut(GuildPlayer dgp) {
 		
 		allOnlineGuildPlayers.remove(dgp);
@@ -142,8 +192,9 @@ public class Guild {
 		setGuildLoc_Y(loc.getBlockY());
 		setGuildLoc_Z(loc.getBlockZ());
 		setWorldName(loc.getWorld().getName());
-		
 	}
+	
+	
 	
 	public Location getGuildLocation()
 	{
@@ -158,6 +209,18 @@ public class Guild {
 		this.guildLoc_X = guildLoc_X;
 	}
 
+	public String getGuildBuildings() {
+		return guildBuildings;
+	}
+	public void setGuildBuildings(String guildBuildings) {
+		this.guildBuildings = guildBuildings;
+	}
+	public List<TMP_GuildBuilding> getGuildBuildingsMaped() {
+		return guildBuildingsMaped;
+	}
+	public void setGuildBuildingsMaped(List<TMP_GuildBuilding> guildBuildingsMaped) {
+		this.guildBuildingsMaped = guildBuildingsMaped;
+	}
 	public int getGuildLoc_Y() {
 		return guildLoc_Y;
 	}
@@ -181,5 +244,53 @@ public class Guild {
 	public void setWorldName(String worldName) {
 		this.worldName = worldName;
 	}
+
+	public int getMmr() {
+		return mmr;
+	}
+	public void setMmr(int mmr) {
+		this.mmr = mmr;
+	}
+	public void addNewGuildPlayer(GuildPlayer guildPlayer)
+	{
+		allOnlineGuildPlayers.add(guildPlayer);
+		allGuildPlayer.add(guildPlayer);
+	}
+
+	public void addGuildStorage(GuildStorage gs)
+	{
+		allGuildStorage.add(gs);
+	}
+	
+	public String getFullString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append( "ID: " + id);
+		builder.append(System.lineSeparator() + "Name: " + name);
+		builder.append(System.lineSeparator() + "Tag: " + tag);
+		builder.append(System.lineSeparator() + "World name: " + worldName);
+		builder.append(System.lineSeparator() + "X Y Z: " + guildLoc_X + " " + guildLoc_Y + " " + guildLoc_Z);
+		builder.append(System.lineSeparator() + "MMR: " + mmr);
+		builder.append(System.lineSeparator() + "Region: " + guildRegionId);
+		builder.append(System.lineSeparator() + "Level: " + guildLevel);
+		builder.append(System.lineSeparator() + "Buildings: " + guildBuildings);
+		return builder.toString();
+	}
+	
+	/*
+	@Override
+	public String toString() {
+
+		return System.lineSeparator() + "Guild ID: " + id + System.lineSeparator() +
+				"Guild Name: " + name + System.lineSeparator() + 
+				"Guild Tag: " + tag + System.lineSeparator() +
+				"Guild Queue: " + guildWars.guildQueueStatus + System.lineSeparator() +
+				"Guild MMR: " + mmr + System.lineSeparator() ;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id;
+	}*/
 }
 

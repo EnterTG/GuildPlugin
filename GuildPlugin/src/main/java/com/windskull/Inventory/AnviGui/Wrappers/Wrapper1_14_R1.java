@@ -139,7 +139,8 @@ public class Wrapper1_14_R1 implements VersionWrapper {
             setTitle(new ChatMessage(title));
         }
 
-        @Override
+        @SuppressWarnings("static-access")
+		@Override
         public void e() {
             super.e();
             this.levelCost.a();

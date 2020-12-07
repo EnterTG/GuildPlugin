@@ -79,5 +79,16 @@ public class ItemsCreator
 		item.setItemMeta(im);
 		return item;
 	}
+	public static ItemStack getSkullItem(String base64String,String name) {
+		ItemStack item = SkullCreator.itemFromBase64(base64String);
+		ItemMeta im = item.getItemMeta();
+		im.setDisplayName(name);
+		item.setItemMeta(im);
+		/*SkullMeta sm = (SkullMeta)item.getItemMeta();
+		sm.setOwningPlayer(Bukkit.getOfflinePlayer((UUID)UUID.fromString(uuidString)));
+		
+		item.setItemMeta((ItemMeta)sm);*/
+		return item;
+	}
 }
 

@@ -20,9 +20,11 @@ public class PlayerJoinListener implements Listener
         GuildPlayer my = (GuildPlayer)GuildPluginMain.eserver.find(GuildPlayer.class).where().eq("playeruuid", (Object)e.getPlayer().getUniqueId()).findUnique();
         if (my != null) {
             Guild g = GuildsManager.getGuildManager().findPlayerGuild(my);
-            //GuildPlayer gp = new GuildPlayer(e.getPlayer(), my.getRang(), g);
-            System.out.append("G " + g);
-            System.out.append("My " + my);
+            //GuildPlayer gp = new GuildPlayer(e.getPlayer(), my.getRang(), g);\
+            System.out.println();
+            System.out.println("G " + g);
+            System.out.println("My " + my);
+            System.out.println();
             g.playerLogIn(my);
         }
 	}

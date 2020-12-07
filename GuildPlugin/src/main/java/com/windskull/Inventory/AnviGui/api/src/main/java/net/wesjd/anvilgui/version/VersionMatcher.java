@@ -14,11 +14,13 @@ import com.windskull.Inventory.AnviGui.abstraction.src.main.java.net.wesjd.anvil
  * @author Wesley Smith
  * @since 1.2.1
  */
+@SuppressWarnings("unused")
 public class VersionMatcher {
 
 	/**
 	 * The server's version
 	 */
+	
 	private final String serverVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3].substring(1);
 	/**
 	 * All available {@link VersionWrapper}s
@@ -33,6 +35,7 @@ public class VersionMatcher {
 	 * @return The {@link VersionWrapper} for this server
 	 * @throws RuntimeException If AnvilGUI doesn't support this server version
 	 */
+	@SuppressWarnings("deprecation")
 	public VersionWrapper match() {
 		try {
 			return Wrapper1_14_R1.class.newInstance(); /*versions.stream()

@@ -40,7 +40,11 @@ extends InventoryTransactionGui {
         });
         this.setItem(5, ItemsCreator.getItemStack(Material.RED_STAINED_GLASS_PANE, "Cofnij"), e -> this.player.openInventory(this.previousGui.getInventory()));
     }
-
+	@Override
+	public boolean blockPlayerInventoryClick() {
+		// TODO Auto-generated method stub
+		return true;
+	}
     @Override
     public boolean onInventoryGuiClick(Player whoClicked, int slot, ItemStack clickedItem) {
         return true;

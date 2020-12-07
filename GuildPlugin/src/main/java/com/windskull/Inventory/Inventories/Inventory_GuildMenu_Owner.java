@@ -1,11 +1,7 @@
 package com.windskull.Inventory.Inventories;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,29 +22,12 @@ import com.avaje.ebean.EbeanServer;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalConfiguration;
-import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extension.factory.MaskFactory;
-import com.sk89q.worldedit.extension.input.ParserContext;
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
-import com.sk89q.worldedit.function.mask.Mask;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.convolution.GaussianKernel;
-import com.sk89q.worldedit.math.convolution.HeightMap;
-import com.sk89q.worldedit.math.convolution.HeightMapFilter;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.DataException;
-import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldedit.world.snapshot.InvalidSnapshotException;
 import com.sk89q.worldedit.world.snapshot.Snapshot;
 import com.sk89q.worldedit.world.snapshot.SnapshotRestore;
@@ -62,6 +41,9 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.managers.storage.StorageException;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.windskull.GuildItems.GuildItem;
+import com.windskull.GuildItems.GuildItemMaterial;
+import com.windskull.GuildItems.GuildItemString;
 import com.windskull.GuildPlugin.Guild;
 import com.windskull.GuildPlugin.GuildPlayer;
 import com.windskull.GuildPlugin.GuildPluginMain;
@@ -69,127 +51,16 @@ import com.windskull.Inventory.AnviGui.api.src.main.java.net.wesjd.anvilgui.Anvi
 import com.windskull.Items.ItemBuilder;
 import com.windskull.Items.ItemsCreator;
 import com.windskull.Managers.GuildsManager;
+import com.windskull.Misc.SchematicOperations;
 
 public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 {
 	
-	private interface GuildItem
-	{
-		boolean checkInv(Inventory inv);
-		String getName();
-		int getAmount();
-		void removeItems(Inventory inv);
-	}
 
-	private class GuildItemString implements GuildItem
-	{
-		public GuildItemString(String name,String mat, int amount) {
-			super();
-			this.mat = mat.toLowerCase();
-			this.amount = amount;
-			this.name = name;
-		}
 
-		String name;
-		String mat;
-		int amount;
-		
-		
-		@Override
-		public boolean checkInv(Inventory inv) 
-		{
-			return Arrays.stream(inv.getContents()).filter(is ->is != null && is.getType().toString().toLowerCase().contains(mat)).collect(Collectors.summingInt(ItemStack::getAmount)) >= amount;
-		}
-		@Override
-		public int getAmount() {
-			return amount;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-		@Override
-		public void removeItems(Inventory inv) {
-			int toremove = amount;
-			for(ItemStack item : inv.getContents())
-			{
-				if(toremove > 0)
-				{
-					if(item.getType().toString().toLowerCase().contains(mat))
-						if(toremove >= item.getAmount())
-						{
-							item.setType(Material.AIR);
-							toremove -= item.getAmount();
-						}
-						else
-						{
-							item.setAmount(item.getAmount()-toremove);
-							toremove = 0;
-						}
-				}
-				else
-					break;	
-			}
-			
-		}
-		
-	}
-	
-	private class GuildItemMaterial implements GuildItem
-	{
-		public GuildItemMaterial(String name,Material mat, int amount) {
-			this.mat = mat;
-			this.amount = amount;
-			this.name= name;
-		}
-		String name;
-		Material mat;
-		int amount;
-		
-		@Override
-		public boolean checkInv(Inventory inv)
-		{
-			return Arrays.stream(inv.getContents()).filter(is -> is != null && is.getType().equals(mat)).collect(Collectors.summingInt(ItemStack::getAmount)) >= amount;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public int getAmount() {
-			return amount;
-		}
-		
-		@Override
-		public void removeItems(Inventory inv) {
-			int toremove = amount;
-			for(ItemStack item : inv.getContents())
-			{
-				if(toremove > 0)
-				{
-					if(item.getType().equals(mat))
-						if(toremove >= item.getAmount())
-						{
-							item.setType(Material.AIR);
-							toremove -= item.getAmount();
-						}
-						else
-						{
-							item.setAmount(item.getAmount()-toremove);
-							toremove = 0;
-						}
-				}
-				else
-					break;	
-			}
-			
-		}
-	}
 	
 	private static HashMap<Integer,List<GuildItem>> guildItems;
+	
 	public Inventory_GuildMenu_Owner(Player p) {
 		super(p);
 		//To config load
@@ -219,10 +90,15 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 	private void createInventory_Owner()
 	{
 		int guildLevel = guildPlayer.getGuild().getGuildLevel();
-		
+		//System.out.println("GuildManager: " + GuildsManager.getGuildManager().getGuildManager(guildPlayer.getGuild()));
 		this.setItem(11, ItemsCreator.getItemStack(Material.PLAYER_HEAD,GuildsManager._ItemsColorNamePrimal +  "Dodaj gracza"), e -> this.createInventory_AddPlayer());
 		this.setItem(13, ItemsCreator.getItemStack(Material.SKELETON_SKULL,GuildsManager._ItemsColorNamePrimal +  "Usun gracza"), e -> this.createInventory_DeletePlayer());
 		this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER,GuildsManager._ItemsColorNamePrimal +  "Rozwiaz gildie"), e -> this.deleteGuildButton());
+		this.setItem(0, ItemsCreator.getItemStack(Material.CHEST,GuildsManager._ItemsColorNamePrimal +  "Storage"),
+				e -> player.openInventory(GuildsManager.getGuildManager().getGuildManager(guildPlayer.getGuild()).storage.getInventory()));
+		
+		this.setItem(1, ItemsCreator.getItemStack(Material.BROWN_BED,GuildsManager._ItemsColorNamePrimal +  "Otworz menu budynkow"), e -> this.openBuildingsMenu());
+		this.setItem(2, ItemsCreator.getItemStack(Material.DIAMOND_SWORD ,GuildsManager._ItemsColorNamePrimal +  "Otworz menu budynkow"), e -> player.openInventory(new Inventory_GuildMenu_WarPanel(player).getInventory()));
 		if(guildLevel == 0 )
 		{
 			ItemBuilder ib = new ItemBuilder(ItemsCreator.getItemStack(Material.GRASS_BLOCK , GuildsManager._ItemsColorNamePrimal +  "Zajmij ziemie")).lore(GuildsManager._ItemsColorNamePrimal + "Wymagane zasoby:");
@@ -237,6 +113,12 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 		}
 	}
 	
+	
+	//Open buildings menu
+	private void openBuildingsMenu()
+	{
+		player.openInventory(new Inventory_GuildMenu_Buildings(player).getInventory());
+	}
 	
 	//Deleting player form guild
 	
@@ -268,6 +150,8 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 		Player playerDel = Bukkit.getPlayer(p.getPlayeruuid());
 		if(playerDel != null) playerDel.sendMessage(GuildsManager._GlobalPrefix + "Zostales usuniety z gildi");
 		GuildsManager.getGuildManager().deleteGuildPlayer(p);
+		Guild g =guildPlayer.getGuild();
+		WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(g.getGuildLocation().getWorld())).getRegion(g.getGuildRegionId()).getMembers().removePlayer(p.getPlayeruuid());//;(player.getUniqueId());
 		p.getGuild().removePlayerFromGuild(p);
 		GuildPluginMain.eserver.delete(GuildPlayer.class,p.getId());
 		
@@ -441,14 +325,15 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 		ProtectedCuboidRegion region = (ProtectedCuboidRegion) regions.getRegion(g.getGuildRegionId());
 		
 		if(deleteGuildBuilding(world,region)) 
-			if(!tryPasteGuildBuilding(g.getGuildLocation(),"GuildCore_"+guildLevel+".schem")) 
+			if(!SchematicOperations.tryPasteGuildBuilding(g.getGuildLocation(),"GuildCore_"+guildLevel+".schem")) 
 			{
 				player.sendMessage(GuildsManager._GlobalPrefix + "Cos poszlo nie tak");
 			}
 			else
 			{
-				
-				 g.setGuildLevel(guildLevel+1);
+				System.out.println("Before: " +System.lineSeparator() + g.getFullString());
+				g.setGuildLevel(guildLevel+1);
+				System.out.println("After: " +System.lineSeparator() + g.getFullString());
 			}
 		
 	}
@@ -463,9 +348,10 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 		
 		ProtectedCuboidRegion pcr = getRegionForGuild();
 		if(!verifyLandForGuild(pcr,player.getWorld()))  player.sendMessage(GuildsManager._GlobalPrefix + "Ta ziemia jest juz zajeta"); 
-		else if(!tryPasteGuildBuilding(player.getLocation(),"GuildCore_1.schem")) player.sendMessage(GuildsManager._GlobalPrefix + "Nie da sie umiesci budynku gildi"); 
+		else if(!SchematicOperations.tryPasteGuildBuilding(player.getLocation(),"GuildCore_1.schem")) player.sendMessage(GuildsManager._GlobalPrefix + "Nie da sie umiesci budynku gildi"); 
 		else 
 		{
+			guildItems.get(guildLevel+1).stream().forEach(gi -> gi.removeItems(inv));
 			guildPlayer.getGuild().setGuildLevel(1);
 			guildPlayer.getGuild().setGuildLocation(player.getLocation());
 			createGuildLand(pcr, player.getWorld());
@@ -508,149 +394,10 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 		
 	}
 	
-	private static final int smoothRadius = 3,smoothHeight = 3,iterations = 3;
 
 	
 
-	//Schematic 
-	private Clipboard loadClipboard(String fileName) throws FileNotFoundException, IOException
-	{
-		Clipboard clipboard;	
-		File file = new File(GuildPluginMain.main.getDataFolder().getAbsolutePath() + "/GuildSchematic/" + fileName);
-		ClipboardFormat format = ClipboardFormats.findByFile(file);
-		ClipboardReader reader = format.getReader(new FileInputStream(file));
-		clipboard = reader.read();
-		return clipboard;
-	}
-	
-	private void pasteSchematic(Clipboard clipboard, Location loc,String fileName) throws FileNotFoundException, IOException
-	{
-		
-		EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(loc.getWorld()), -1);
-		Operation operation = new ClipboardHolder(clipboard)
-	            .createPaste(editSession)
-	            .to(BlockVector3.at(loc.getX(),loc.getY(),loc.getZ()))
-	            //.to(BlockVector3.at(p1.getX(),p1.getY(),p1.getZ()))
-	            .ignoreAirBlocks(true).build();
-	    Operations.complete(operation);
-	}
-	
-	@SuppressWarnings("deprecation")
-	private boolean tryPasteGuildBuilding(Location loc,String fileName)
-	{
-		
-		Clipboard clipboard;
-		try {
-			clipboard = loadClipboard(fileName);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return false;
-		}
-		//Location loc = player.getLocation();
-		World world = loc.getWorld();
-		com.sk89q.worldedit.world.World w = BukkitAdapter.adapt(world);
-		
-		
-		//Origin must be in region
-		
-		//Check corners height 
-		
-		BlockVector3 origin = clipboard.getOrigin();
-		int width = clipboard.getWidth(), lenght = clipboard.getLength();
-		
-		BlockVector3 p1 = BlockVector3.at(loc.getX() - origin.getX(), loc.getY() - origin.getY(), loc.getZ() - origin.getZ());
-		BlockVector3 p2 = p1.add(width, 0, 0);
-		BlockVector3 p3 = p1.add(0, 0, lenght);
-		BlockVector3 p4 = p1.add(width,0,lenght);
 
-		List<BlockVector3> points = new ArrayList<BlockVector3>();
-		
-		points.add(p1);
-		points.add(p2);
-		points.add(p3);
-		points.add(p4);
-		
-		//points.forEach(p -> System.out.println("Point: " + p));
-		
-		for(BlockVector3 a : points)
-		{
-			for(BlockVector3 b : points)
-			{
-				if(a != b)
-				{
-					int h1 = w.getHighestTerrainBlock(a.getBlockX(), a.getBlockZ(), a.getBlockY()-10, a.getBlockY()+10);
-					int h2 = w.getHighestTerrainBlock(b.getBlockX(), b.getBlockZ(), b.getBlockY()-10, b.getBlockY()+10);
-					
-					//System.out.println("ABS: " + Math.abs(h1-h2));
-					if(Math.abs((h1 - h2)) >5)
-					{
-						//System.out.println("Bledne abs: " +Math.abs(h1 - h2) + " h1: " + h1 + " h2: " + h2	 );
-						return false;
-					}
-				}
-			}
-		}
-
-		try 
-		{
-			pasteSchematic(clipboard,loc, fileName);
-			
-			Bukkit.getScheduler().runTaskAsynchronously(GuildPluginMain.main, new Runnable() 
-			{
-				public void run() 
-				{ 
-					
-					EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(loc.getWorld()), -1);
-					Region r = new CuboidRegion(p1.subtract(0,20,0), p4.add(0, clipboard.getRegion().getHeight(), 0));
-					editSession.replaceBlocks(r, BlockTypes.OBSIDIAN.toMask(editSession), BlockTypes.AIR);
-					
-					
-					ParserContext parserContext = new ParserContext();
-				    parserContext.setWorld(w);
-			        parserContext.setRestricted(false);
-				    
-				    //Create regions on edge of schematic and perform smoothing on terrain
-						
-					CuboidRegion region1 = new CuboidRegion(p1.subtract(smoothRadius,-smoothHeight,smoothRadius), p2.add(smoothRadius, smoothHeight, smoothRadius));
-					CuboidRegion region2 = new CuboidRegion(p2.add(-smoothRadius, smoothHeight, -smoothRadius), p4.add(smoothRadius,-smoothHeight,smoothRadius));
-					CuboidRegion region3= new CuboidRegion(p4.add(smoothRadius,smoothHeight,smoothRadius), p3.subtract(smoothRadius,smoothHeight,smoothRadius));
-					CuboidRegion region4 = new CuboidRegion(p3.add(smoothRadius,smoothHeight,smoothRadius), p1.add(-smoothRadius,-smoothHeight,smoothRadius));
-					List<CuboidRegion> regions = new ArrayList<CuboidRegion>();
-					regions.add(region1);
-					regions.add(region2);
-					regions.add(region3);
-					regions.add(region4);
-				 
-					
-				  
-					LocalSession session = new LocalSession();
-					
-					session.setWorldOverride(w);
-					
-					MaskFactory mf = WorldEdit.getInstance().getMaskFactory();
-					Mask mask = mf.parseFromInput("grass,stone,cobblestone,dirt", parserContext);
-						
-					
-					
-					regions.forEach(region -> {
-						HeightMap heightMap = new HeightMap(editSession, region, mask);
-				        HeightMapFilter filterr = new HeightMapFilter(new GaussianKernel(width > lenght ? width : lenght, 1.0));
-				        heightMap.applyFilter(filterr, iterations);		        
-					});
-					
-				}
-			});
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-			return false;
-			
-		} 			
-		return true;
-	}
-	
-	
 	
 	//Misc
     public List<Block> getSurrounding(Location origin) {
@@ -700,25 +447,7 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
     }
 
     
-	public int getHight(World w,int x,int z,int miny,int maxy)
-	{
-		/*int minys = miny;
-		if(w.getBlockAt(x, minys, z).getType().isAir()) minys = minys+1;
-		if(w.getBlockAt(x, minys, z).getType().isAir()) minys = minys+1;*/
-		System.out.print("Looking at: x: " +x +" z: " + z  );
-		for(int y = maxy; y > miny;y--)
-		{
-			
-			Material mat = w.getBlockAt(x, y, z).getType();
-			if(mat.equals(Material.DIRT) || mat.equals(Material.COBBLESTONE) || mat.equals(Material.GRASS_BLOCK) || mat.equals(Material.STONE))
-			{
-				System.out.println(" Found on: " + y);
-				return y;
-			}
-			
-		}
-		return maxy;
-	}
+
 	
 	public void removeItemFromInventory(Inventory inv, int amount, Material mat)
 	{

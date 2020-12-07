@@ -10,10 +10,14 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.windskull.GuildPlugin.Guild;
 import com.windskull.GuildPlugin.GuildPlayer;
 import com.windskull.GuildPlugin.GuildPluginMain;
 import com.windskull.GuildPlugin.GuildRanks;
+import com.windskull.GuildPlugin.GuildStorage;
+import com.windskull.GuildPlugin.StorageType;
 import com.windskull.Inventory.AnviGui.api.src.main.java.net.wesjd.anvilgui.AnvilGUI;
 import com.windskull.Items.ItemsCreator;
 import com.windskull.Managers.GuildsManager;
@@ -79,8 +83,32 @@ public class Inventory_GuildMenu_NewPlayer extends Inventory_GuildMenu {
 		g.setName(name);
 		g.setOpis("Opis nie ustawiony");
 		g.setTag(tag);
+		g.setMmr(1000);
 		GuildPlayer gp = new GuildPlayer(player, GuildRanks.Owner, g);
 		gp.init();
+		
+		GuildStorage gs = new GuildStorage();
+		gs.setGuild(g);
+		gs.setStorageType(StorageType.NORMAL);
+		gs.setSize(36);
+		gs.setStorageContent("");
+		g.addGuildStorage(gs);
+		
+		
+		gs = new GuildStorage();
+		gs.setGuild(g);
+		gs.setStorageType(StorageType.NORMAL);
+		gs.setSize(36);
+		gs.setStorageContent("");
+		g.addGuildStorage(gs);
+		
+		gs = new GuildStorage();
+		gs.setGuild(g);
+		gs.setStorageType(StorageType.SAFE);
+		gs.setSize(27);
+		gs.setStorageContent("");
+		g.addGuildStorage(gs);
+
 		g.addNewGuildPlayer(gp);
 		GuildsManager.getGuildManager().addNewGuild(g);
 		GuildsManager.getGuildManager().addGuildPlayer(player, gp);
@@ -121,6 +149,8 @@ public class Inventory_GuildMenu_NewPlayer extends Inventory_GuildMenu {
 		sendMessageToAllGuildPlayers(g,GuildsManager._GlobalPrefix +"Gracz: " + player.getName() + " dolaczyl do gildi.");
 		g.addNewGuildPlayer(gp);
 		GuildsManager kwp = GuildsManager.getGuildManager();
+		WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(g.getGuildLocation().getWorld())).getRegion(g.getGuildRegionId()).getMembers().addPlayer(player.getUniqueId());
+		
 		kwp.playersInvitations.remove(player);
 		createInventory();
 	}
