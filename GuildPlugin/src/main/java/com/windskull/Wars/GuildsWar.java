@@ -119,6 +119,9 @@ public class GuildsWar implements Listener
 		PlayerQuitEvent.getHandlerList().unregister(this);
 		PlayerJoinEvent.getHandlerList().unregister(this);
 		calculateMMR(g.getGuild(),attackerGuild.getGuild() == g.getGuild() ? defenderGuild.getGuild() : attackerGuild.getGuild());
+		
+		attackerGuild.updateMMR();
+		defenderGuild.updateMMR();
 	}
 
 	public void calculateMMR(Guild winner, Guild losed)
@@ -130,8 +133,8 @@ public class GuildsWar implements Listener
 		losemmr = losemmr - (50 * (losemmr/winmmr));
 		System.out.println("Win add mmr: " + winmmr + " Lose sub mmr: " + losemmr);
 		
-		winner.setMmr(Math.min(winmmr,0));
-		losed.setMmr(Math.min(losemmr,0));
+		winner.setMmr(Math.max(winmmr,0));
+		losed.setMmr(Math.max(losemmr,0));
 	}
 	
 	

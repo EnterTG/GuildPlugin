@@ -38,7 +38,7 @@ public class Inventory_GuildMenu_WarPanel extends Inventory_GuildMenu {
 	{
 		updateQueue();
 		updateJoinLeaveButton();
-		
+		updateMMR();
 		
 		if(guildPlayer.getRang().equals(GuildRanks.Owner) || guildPlayer.getRang().equals(GuildRanks.Capitan) )
 		{
@@ -84,28 +84,35 @@ public class Inventory_GuildMenu_WarPanel extends Inventory_GuildMenu {
 		this.setItem(17, ItemsCreator.getItemStack(Material.GRINDSTONE , getQueueStatusName()), e -> startMatchSearch());
 	}
 	
+	public void updateMMR()
+	{
+		this.setItem(4, ItemsCreator.getItemStack(Material.GOLD_BLOCK , GuildsManager._ItemsColorNamePrimal+ "MMR: " + GuildsManager._ItemsColorNameSecond+ guildPlayer.getGuild().getMmr()));
+	}
+	
 	public void updateQueue()
 	{
 		GuildPlayer[] queuePlayers = guildPlayer.getGuild().guildWars.getPlayersQueue();
-			
-			IntStream.range(0, warsFields.length).forEach( i -> 
+		
+		
+		
+		IntStream.range(0, warsFields.length).forEach( i -> 
+		{
+			if(i < queuePlayers.length)
 			{
-				if(i < queuePlayers.length)
-				{
-					GuildPlayer gp = queuePlayers[i];
-					if(gp.getPlayer() == null)   gp.init();
-					setItem(warsFields[i], ItemsCreator.getItemStack(
-							gp.getRang().equals(GuildRanks.Member) ? Material.IRON_SWORD : gp.getRang().equals(GuildRanks.Capitan) ? Material.GOLDEN_SWORD : Material.DIAMOND_SWORD,
-									GuildsManager._ItemsColorNamePrimal + gp.getPlayer().getName()));
-				}
-				else
-					setItem(warsFields[i], ItemsCreator.getItemStack(Material.GRAY_STAINED_GLASS_PANE,GuildsManager._ItemsColorNamePrimal + "Wolne miejsce"));
-			});
-			
-			if(guildPlayer.getRang().equals(GuildRanks.Owner) || guildPlayer.getRang().equals(GuildRanks.Capitan) )
-			{
-				this.setItem(17, ItemsCreator.getItemStack(Material.GRINDSTONE , getQueueStatusName()), e -> startMatchSearch());
+				GuildPlayer gp = queuePlayers[i];
+				if(gp.getPlayer() == null)   gp.init();
+				setItem(warsFields[i], ItemsCreator.getItemStack(
+						gp.getRang().equals(GuildRanks.Member) ? Material.IRON_SWORD : gp.getRang().equals(GuildRanks.Capitan) ? Material.GOLDEN_SWORD : Material.DIAMOND_SWORD,
+								GuildsManager._ItemsColorNamePrimal + gp.getPlayer().getName()));
 			}
+			else
+				setItem(warsFields[i], ItemsCreator.getItemStack(Material.GRAY_STAINED_GLASS_PANE,GuildsManager._ItemsColorNamePrimal + "Wolne miejsce"));
+		});
+		
+		if(guildPlayer.getRang().equals(GuildRanks.Owner) || guildPlayer.getRang().equals(GuildRanks.Capitan) )
+		{
+			this.setItem(17, ItemsCreator.getItemStack(Material.GRINDSTONE , getQueueStatusName()), e -> startMatchSearch());
+		}
 	}
 	
 	public void updateJoinLeaveButton()

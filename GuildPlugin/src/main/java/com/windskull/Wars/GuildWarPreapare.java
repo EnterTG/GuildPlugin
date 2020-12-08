@@ -107,7 +107,10 @@ public class GuildWarPreapare implements Listener
 		return guild;
 	}
 	
-	
+	public void updateMMR()
+	{
+		watchers.forEach(w -> w.updateMMR());
+	}
 	
 	/*
 	@EventHandler
