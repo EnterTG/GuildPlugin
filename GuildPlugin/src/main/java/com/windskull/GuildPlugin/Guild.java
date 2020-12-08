@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import com.windskull.Managers.GuildsManager;
 import com.windskull.Misc.GuildDataBaseFunctions;
 import com.windskull.Wars.GuildWarPreapare;
 
@@ -255,6 +256,7 @@ public class Guild
 	{
 		allOnlineGuildPlayers.add(guildPlayer);
 		allGuildPlayer.add(guildPlayer);
+		GuildsManager.getGuildManager().addGuildPlayer(guildPlayer);
 	}
 
 	public void addGuildStorage(GuildStorage gs)
@@ -277,7 +279,7 @@ public class Guild
 		return builder.toString();
 	}
 	
-	/*
+	
 	@Override
 	public String toString() {
 
@@ -291,6 +293,6 @@ public class Guild
 	@Override
 	public int hashCode() {
 		return id;
-	}*/
+	}
 }
 

@@ -94,10 +94,12 @@ public class GuildPlayer {
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		/*final int prime = 31;
 		int result = 1;
 		result = prime * result + ((playeruuid == null) ? 0 : playeruuid.hashCode());
-		return result;
+		return result;*/
+		return playeruuid.hashCode();
+		
 	}
 	@Override
 	public boolean equals(Object obj) {

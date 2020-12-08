@@ -331,9 +331,9 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 			}
 			else
 			{
-				System.out.println("Before: " +System.lineSeparator() + g.getFullString());
+
 				g.setGuildLevel(guildLevel+1);
-				System.out.println("After: " +System.lineSeparator() + g.getFullString());
+
 			}
 		
 	}
@@ -344,7 +344,7 @@ public class Inventory_GuildMenu_Owner extends Inventory_GuildMenu
 	{
 		int guildLevel = guildPlayer.getGuild().getGuildLevel();
 		Inventory inv = player.getInventory();
-		if(guildItems.get(guildLevel+1).stream().anyMatch(gi-> !gi.checkInv(inv))) player.sendMessage(GuildsManager._GlobalPrefix + "Brak przedmiotow na budynek gildi"); 
+		if(guildItems.get(guildLevel+1).stream().anyMatch(gi-> !gi.checkInv(inv))) { player.sendMessage(GuildsManager._GlobalPrefix + "Brak przedmiotow na budynek gildi"); if(!player.isOp()) return;}
 		
 		ProtectedCuboidRegion pcr = getRegionForGuild();
 		if(!verifyLandForGuild(pcr,player.getWorld()))  player.sendMessage(GuildsManager._GlobalPrefix + "Ta ziemia jest juz zajeta"); 

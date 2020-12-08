@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
@@ -27,7 +27,7 @@ public class GuildsManager {
 	private Map<Guild,GuildManager> allGuildsManagers = new HashMap<Guild, GuildManager>();
 
 
-	private Map<Player, GuildPlayer> allGuildPlayers = new HashMap<Player, GuildPlayer>();
+	private Map<UUID, GuildPlayer> allGuildPlayers = new HashMap<UUID, GuildPlayer>();
 	public Map<Player, PlayerInvitations> playersInvitations = new HashMap<Player, PlayerInvitations>();
 	
 	
@@ -51,11 +51,12 @@ public class GuildsManager {
 	}
 	public void deleteGuildPlayer(GuildPlayer gp)
 	{
-		allGuildPlayers.remove(gp.getPlayer());
+		allGuildPlayers.remove(gp.getPlayeruuid());
 	}
 	public void addNewGuild(Guild g) 
 	{
 		this.allGuilds.add(g);
+		g.getAllGuildPlayer().forEach(gp -> allGuildPlayers.put(gp.getPlayeruuid(), gp));
 		this.allGuildsManagers.put(g, new GuildManager(g));
 	}
 
@@ -63,77 +64,43 @@ public class GuildsManager {
 		return this.allGuilds;
 	}
 
-	public Map<Player, GuildPlayer> getAllGuildPlayers() {
+	public Map<UUID, GuildPlayer> getAllGuildPlayers() {
 		return allGuildPlayers;
 	}
-	public void setAllGuildPlayers(Map<Player, GuildPlayer> allGuildPlayers) {
+	public void setAllGuildPlayers(Map<UUID, GuildPlayer> allGuildPlayers) {
 		this.allGuildPlayers = allGuildPlayers;
 	}
+	
+	
+	
 	public GuildManager getGuildManager(Guild g)
 	{
-		if( allGuildsManagers.containsKey(g) )
+		if(allGuildsManagers.containsKey(g) )
 			return allGuildsManagers.get(g);
 		else
 		{
 			allGuildsManagers.put(g, new GuildManager(g));
 			return allGuildsManagers.get(g);
 		}
-		//return allGuildsManagers.get(g);
 	}
-	
-	public Guild findPlayerGuild(GuildPlayer p) {
-		Optional<Guild> guild = this.allGuilds.parallelStream().filter(g -> g.getAllGuildPlayer().parallelStream().anyMatch(pg -> pg.getPlayeruuid().compareTo(p.getPlayeruuid()) == 0)).findFirst();
-		if (guild.isPresent()) {
-			return guild.get();
-		}
-		return null;
-	}
-	public Guild findPlayerGuild(Player p) {
-		Optional<Guild> guild = this.allGuilds.parallelStream().filter(g -> g.getAllGuildPlayer().parallelStream().anyMatch(pg -> pg.getPlayeruuid().compareTo(p.getUniqueId()) == 0)).findFirst();
-		if (guild.isPresent()) {
-			return guild.get();
-		}
+	public Guild getPlayerGuild(Player p)
+	{
+		GuildPlayer gp = getGuildPlayer(p);
+		if(gp != null) return gp.getGuild();
 		return null;
 	}
 	
-	
+	public void addGuildPlayer(GuildPlayer gp)
+	{
+		allGuildPlayers.put(gp.getPlayeruuid(), gp);
+	}
 	
 	public GuildPlayer getGuildPlayer(Player p)
 	{
-		/*if(allGuildPlayers.containsKey(p)) return allGuildPlayers.get(p);
-		else
-		{
-			GuildPlayer my = (GuildPlayer)GuildPluginMain.eserver.find(GuildPlayer.class).where().eq("playeruuid", (Object)p.getUniqueId()).findUnique();
-			if(my != null)
-			{
-				allGuildPlayers.put(p, my);
-				return my;
-			}
-			else
-				return null;
-		}*/
-		
-		
-		
-		//UUID playerUUID = p.getUniqueId();
-		//this.allGuilds.parallelStream().filter(g -> g.getAllOnlineGuildPlayers().parallelStream().filter(gp -> gp.getPlayeruuid().equals(playerUUID)).findFirst().isPresent()).findFirst();
-		if(allGuildPlayers.containsKey(p)) return allGuildPlayers.get(p);
-		Optional<Optional<GuildPlayer>> guildPlayer = this.allGuilds.parallelStream().map( g -> g.getAllGuildPlayer().parallelStream().filter(pg -> pg.getPlayeruuid().equals(p.getUniqueId())).findAny() ).findAny();
-		if (guildPlayer.isPresent() && guildPlayer.get().isPresent() ) {
-			allGuildPlayers.put(p, guildPlayer.get().get());
-			return guildPlayer.get().get();
-		}
-		return null;
+		return allGuildPlayers.get(p.getUniqueId());
 	}
 
-
-	public void addGuildPlayer(Player p, GuildPlayer gp) {
-		this.allGuildPlayers.put(p, gp);
-	}
-
-	/*public GuildPlayer getGuildPlayer(Player p) {
-		return this.allGuildPlayers.get((Object)p);
-	}*/
+	//Check guilds name ana tag
 		
 	public boolean isGuildExist(String s) {
 		return this.allGuilds.parallelStream().anyMatch(g -> g.getName().equals(s));
@@ -141,12 +108,9 @@ public class GuildsManager {
 	public boolean isTAGExist(String s) {
 		return this.allGuilds.parallelStream().anyMatch(g -> g.getTag().equals(s));
 	}
-	public Map<Guild, GuildManager> getAllGuildsManagers() {
-		return allGuildsManagers;
-	}
-	public void setAllGuildsManagers(Map<Guild, GuildManager> allGuildsManagers) {
-		this.allGuildsManagers = allGuildsManagers;
-	}
+
+	//Guild invitations
+	
 	public void addGuildInvitation(Player p, Guild g)
 	{
 		if(playersInvitations.containsKey(p)) playersInvitations.get(p).addInvitation(g);

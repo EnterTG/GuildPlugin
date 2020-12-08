@@ -64,7 +64,7 @@ public class GuildPluginMain extends JavaPlugin{
 		
 		loadGuild();
 		
-		disaplayAllGuilds();
+		//disaplayAllGuilds();
 	}
 	
 	@Override
@@ -74,7 +74,8 @@ public class GuildPluginMain extends JavaPlugin{
 		//Map<Guild,GuildManager> guildsmanagers = guildsManager.getAllGuildsManagers();
 		guildsManager.getAllGuild().forEach(g -> 
 		{
-			guildsManager.getAllGuildsManagers().get(g).save();
+			//System.out.println("Manager: " + guildsManager.getGuildManager(g));
+			guildsManager.getGuildManager(g).save();
 			g.updateGuildBuildings();
 			eserver.update(g);
 			System.out.println(g.getFullString());

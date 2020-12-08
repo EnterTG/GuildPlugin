@@ -111,7 +111,7 @@ public class Inventory_GuildMenu_NewPlayer extends Inventory_GuildMenu {
 
 		g.addNewGuildPlayer(gp);
 		GuildsManager.getGuildManager().addNewGuild(g);
-		GuildsManager.getGuildManager().addGuildPlayer(player, gp);
+		//GuildsManager.getGuildManager().addGuildPlayer(gp);
 		GuildPluginMain.eserver.save(g);
 	}
 	
