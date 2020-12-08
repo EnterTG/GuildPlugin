@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.earth2me.essentials.Essentials;
+import com.windskull.GuildPlugin.Guild;
 import com.windskull.GuildPlugin.GuildPluginMain;
 import com.windskull.Managers.GuildsManager;
 import com.windskull.Misc.PlayerHandler;
@@ -109,14 +110,30 @@ public class GuildsWar implements Listener
 	
 	public void guildWin(GuildWarPreapare g)
 	{
+		
+		
 		isStarted = false;
 		cashe.forEach((p,v) ->{p.sendMessage(GuildsManager._GlobalPrefix+ "Wojna zakonczyla sie"); p.teleport((v.booleanValue() ? attackerGuild : defenderGuild ).getGuild().getGuildLocation()); });
 		leavers.forEach((p,v) -> offlineTeleport(Bukkit.getOfflinePlayer(p),(v.booleanValue() ? attackerGuild : defenderGuild ).getGuild().getGuildLocation(),v.booleanValue()) );
 		EntityDamageEvent.getHandlerList().unregister(this);
 		PlayerQuitEvent.getHandlerList().unregister(this);
 		PlayerJoinEvent.getHandlerList().unregister(this);
+		calculateMMR(g.getGuild(),attackerGuild.getGuild() == g.getGuild() ? defenderGuild.getGuild() : attackerGuild.getGuild());
 	}
 
+	public void calculateMMR(Guild winner, Guild losed)
+	{
+		int winmmr =winner.getMmr();
+		int losemmr =losed.getMmr();
+		
+		winmmr = winmmr + (50 * (losemmr/winmmr));
+		losemmr = losemmr - (50 * (losemmr/winmmr));
+		System.out.println("Win add mmr: " + winmmr + " Lose sub mmr: " + losemmr);
+		
+		winner.setMmr(Math.min(winmmr,0));
+		losed.setMmr(Math.min(losemmr,0));
+	}
+	
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e)

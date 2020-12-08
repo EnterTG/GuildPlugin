@@ -129,7 +129,7 @@ public class Inventory_GuildMenu_WarPanel extends Inventory_GuildMenu {
 			case JOINED:
 				p.sendMessage(GuildsManager._GlobalPrefix + "Dolaczyles do grupy");
 				break;
-			case LEVE:
+			case LEAVE:
 				p.sendMessage(GuildsManager._GlobalPrefix + "Opusciles grupe");
 				break;
 		}

@@ -66,7 +66,7 @@ public class GuildWarPreapare implements Listener
 			if(queuePlayers.contains(player)) 
 			{
 				queuePlayers.remove(player); 
-				b = PlayerQueueJoinResponse.LEVE;
+				b = PlayerQueueJoinResponse.LEAVE;
 			}
 			else
 			{
