@@ -113,8 +113,15 @@ public class GuildsWar implements Listener
 		
 		
 		isStarted = false;
+		
+		attackerGuild.guildQueueStatus = GuildQueueStatus.NOINQUEUE;
+		defenderGuild.guildQueueStatus = GuildQueueStatus.NOINQUEUE;
+		
 		cashe.forEach((p,v) ->{p.sendMessage(GuildsManager._GlobalPrefix+ "Wojna zakonczyla sie"); p.teleport((v.booleanValue() ? attackerGuild : defenderGuild ).getGuild().getGuildLocation()); });
 		leavers.forEach((p,v) -> offlineTeleport(Bukkit.getOfflinePlayer(p),(v.booleanValue() ? attackerGuild : defenderGuild ).getGuild().getGuildLocation(),v.booleanValue()) );
+		
+		
+		
 		EntityDamageEvent.getHandlerList().unregister(this);
 		PlayerQuitEvent.getHandlerList().unregister(this);
 		PlayerJoinEvent.getHandlerList().unregister(this);
