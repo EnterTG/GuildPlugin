@@ -1,6 +1,7 @@
 package com.windskull.Wars;
 
-public enum PlayerQueueJoinResponse {
+public enum PlayerQueueJoinResponse
+{
 
-	JOINED,LEAVE,CANTJOIN
+	JOINED, LEAVE, CANTJOIN
 }

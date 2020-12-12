@@ -1,7 +1,7 @@
 package com.windskull.Wars;
 
-public enum GuildQueueStatus 
+public enum GuildQueueStatus
 {
 
-	NOINQUEUE,INQUEUE,INMATCH
+	NOINQUEUE, INQUEUE, INMATCH
 }

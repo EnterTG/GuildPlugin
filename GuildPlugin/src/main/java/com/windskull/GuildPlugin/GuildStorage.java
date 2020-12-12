@@ -10,64 +10,73 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="GuildsStorage")
-public class GuildStorage 
+@Table(name = "GuildsStorage")
+public class GuildStorage
 {
 
 	@Id
 	private int id;
-	
-	@OneToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="guildStorage")
-    private Guild guild;
-	
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "guildStorage")
+	private Guild guild;
+
 	@Lob
 	private String storageContent;
-	
+
 	@Column
 	private int size;
-	
+
 	@Column
 	private StorageType storageType;
-	
-	
-	public int getId() {
+
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public Guild getGuild() {
+	public Guild getGuild()
+	{
 		return guild;
 	}
 
-	public void setGuild(Guild guild) {
+	public void setGuild(Guild guild)
+	{
 		this.guild = guild;
 	}
 
-	public String getStorageContent() {
+	public String getStorageContent()
+	{
 		return storageContent;
 	}
 
-	public void setStorageContent(String storageContent) {
+	public void setStorageContent(String storageContent)
+	{
 		this.storageContent = storageContent;
 	}
 
-	public int getSize() {
+	public int getSize()
+	{
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(int size)
+	{
 		this.size = size;
 	}
 
-	public StorageType getStorageType() {
+	public StorageType getStorageType()
+	{
 		return storageType;
 	}
 
-	public void setStorageType(StorageType storageType) {
+	public void setStorageType(StorageType storageType)
+	{
 		this.storageType = storageType;
 	}
 

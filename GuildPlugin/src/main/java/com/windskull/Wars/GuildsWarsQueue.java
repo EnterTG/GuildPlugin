@@ -11,92 +11,98 @@ import com.windskull.GuildPlugin.GuildPluginMain;
 import com.windskull.Managers.GuildsWarsManager;
 import com.windskull.Managers.GuildsWarsMapsManager;
 
-public class GuildsWarsQueue 
+public class GuildsWarsQueue
 {
-	
+
 	private static GuildsWarsQueue GuildsWarsQueue;
-	
 
 	public class QueuedGuild
 	{
 		public int mmr;
-		
+
 		public GuildWarPreapare guildWarPreapare;
 		public int queueTime = 0;
 		public int attempts = 1;
-		
+
 		public QueuedGuild(GuildWarPreapare gwp)
 		{
 			guildWarPreapare = gwp;
 			mmr = gwp.getGuild().getMmr();
 		}
-		
+
 		@Override
-		public boolean equals(Object obj) 
+		public boolean equals(Object obj)
 		{
-			if(obj instanceof QueuedGuild)
+			if (obj instanceof QueuedGuild)
 			{
 				return ((QueuedGuild) obj).guildWarPreapare.getGuild().getId() == guildWarPreapare.getGuild().getId();
+			} else
+			{
+				return false;
 			}
-			else return false;
 		}
-		
+
 		@Override
-		public int hashCode() {
+		public int hashCode()
+		{
 			return guildWarPreapare.hashCode();
 		}
 	}
-	
+
 	public class GuildWarFind
 	{
 		public QueuedGuild attackerGuild;
 		public QueuedGuild defenderGuild;
-		
+
 		public void start(GuildsWars_Map map)
 		{
-			System.out.println("Start guilds war:  " + attackerGuild.guildWarPreapare.getGuild() + " And " + defenderGuild.guildWarPreapare.getGuild() );
+			System.out.println("Start guilds war:  " + attackerGuild.guildWarPreapare.getGuild() + " And " + defenderGuild.guildWarPreapare.getGuild());
 			System.out.println();
-			GuildsWar guildsWar = new GuildsWar(attackerGuild.guildWarPreapare,defenderGuild.guildWarPreapare,map);
+			GuildsWar guildsWar = new GuildsWar(attackerGuild.guildWarPreapare, defenderGuild.guildWarPreapare, map);
 			guildsWar.startWar();
 			GuildsWarsManager.getInstance().addGuildWar(guildsWar);
-			
 
-			
-			
 		}
-		
+
 		@Override
-		public int hashCode() {
-			return Objects.hash(attackerGuild,defenderGuild);
+		public int hashCode()
+		{
+			return Objects.hash(attackerGuild, defenderGuild);
 		}
 	}
-	
+
 	public static GuildsWarsQueue getInstance()
 	{
-		if (GuildsWarsQueue == null) {
+		if (GuildsWarsQueue == null)
+		{
 			GuildsWarsQueue = new GuildsWarsQueue();
 		}
 		return GuildsWarsQueue;
 	}
-	
+
 	private ArrayList<QueuedGuild> guildsInQueue;
 	private final Lock lock = new ReentrantLock();
-	
-	
+
 	@SuppressWarnings("deprecation")
 	private GuildsWarsQueue()
 	{
-		guildsInQueue = new ArrayList<QueuedGuild>();
-		
-		//For test
-		try {
-			GuildPluginMain.server.getScheduler().scheduleAsyncRepeatingTask(GuildPluginMain.main, () -> {searchGoodMatchForAll();}, 120, 80);
-		} catch (Exception e) {
-			//e.printStackTrace();
+		guildsInQueue = new ArrayList<>();
+
+		// For test
+		try
+		{
+			GuildPluginMain.server.getScheduler().scheduleAsyncRepeatingTask(GuildPluginMain.main, () ->
+			{
+				searchGoodMatchForAll();
+			}, 120, 80);
+		} catch (Exception e)
+		{
+			// e.printStackTrace();
 		}
-		
+
 	}
-	//For test disable scheduler
+
+	// For test disable scheduler
 	public void joinQueue(GuildWarPreapare gwp)
 	{
 
@@ -104,77 +110,80 @@ public class GuildsWarsQueue
 		QueuedGuild qGuild = new QueuedGuild(gwp);
 		guildsInQueue.add(qGuild);
 		gwp.guildQueueStatus = GuildQueueStatus.INQUEUE;
-	//	System.out.println("Add guild " + gwp.getGuild() +" to queue succes queue size: " +  guildsInQueue.size());	
-		lock.unlock();	
+		// System.out.println("Add guild " + gwp.getGuild() +" to queue succes queue size: " + guildsInQueue.size());
+		lock.unlock();
 	}
-	
-	public  void leaveQueue(GuildWarPreapare gwp)
+
+	public void leaveQueue(GuildWarPreapare gwp)
 	{
 		lock.lock();
 		QueuedGuild qGuild = new QueuedGuild(gwp);
 		guildsInQueue.remove(qGuild);
-	//	System.out.println("Remove guild " + gwp.getGuild() +" from queue succes queue size: " +  guildsInQueue.size());
+		// System.out.println("Remove guild " + gwp.getGuild() +" from queue succes queue size: " + guildsInQueue.size());
 		gwp.guildQueueStatus = GuildQueueStatus.NOINQUEUE;
-		lock.unlock();		
+		lock.unlock();
 	}
-	
-	public void searchGoodMatchForAll() 
+
+	public void searchGoodMatchForAll()
 	{
-		//System.out.println("Search guilds match guilds in que: " + guildsInQueue.size());
+		// System.out.println("Search guilds match guilds in que: " + guildsInQueue.size());
 		List<GuildWarFind> guildWarFinds = new ArrayList<>();
 		List<QueuedGuild> guildsToRemoveGuilds = new ArrayList<>();
 		lock.lock();
-		try 
+		try
 		{
-			guildsInQueue.forEach(qw -> {
+			guildsInQueue.forEach(qw ->
+			{
 				GuildWarFind guildWarFind;
-				if(!guildsToRemoveGuilds.contains(qw) && (guildWarFind = searchGoodMatch(qw)) != null)
+				if (!guildsToRemoveGuilds.contains(qw) && (guildWarFind = searchGoodMatch(qw)) != null)
 				{
 					guildsToRemoveGuilds.add(guildWarFind.attackerGuild);
 					guildsToRemoveGuilds.add(guildWarFind.defenderGuild);
 					guildWarFinds.add(guildWarFind);
 				}
-				
-			}
-			);
-			guildsInQueue.removeAll(guildsToRemoveGuilds);
-			//For tests
 
-		} 
-		catch (Exception e) {e.printStackTrace();}
-		finally 
+			});
+			guildsInQueue.removeAll(guildsToRemoveGuilds);
+			// For tests
+
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		} finally
 		{
 			lock.unlock();
 		}
 		try
 		{
 			GuildsWarsMapsManager guildsWarsMapsManager = GuildsWarsMapsManager.getInstance();
-			guildWarFinds.stream().filter(f -> f != null).forEach(f -> {
-				Optional<GuildsWars_Map> map; 
-				
-				
-				while(!(map = guildsWarsMapsManager.getFreeMap()).isPresent())
+			guildWarFinds.stream().filter(f -> f != null).forEach(f ->
+			{
+				Optional<GuildsWars_Map> map;
+
+				while (!(map = guildsWarsMapsManager.getFreeMap()).isPresent())
 				{
-					try {
+					try
+					{
 						Thread.sleep(10);
-					} 
-					catch (InterruptedException e)
+					} catch (InterruptedException e)
 					{
 						e.printStackTrace();
 					}
 				}
 				f.start(map.get());
 			});
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
-		catch (Exception e) {e.printStackTrace();}
 	}
-	
+
 	public synchronized GuildWarFind searchGoodMatch(QueuedGuild gwp)
 	{
 		int mmr = gwp.mmr;
-		int attempts = gwp.attempts ;
-		Optional<QueuedGuild> opponent = guildsInQueue.stream().filter(g -> ( mmr-(100*attempts) <= g.mmr && g.mmr <= mmr+(100*attempts) && g != gwp )).findAny();
-		if(opponent.isPresent())
+		int attempts = gwp.attempts;
+		Optional<QueuedGuild> opponent = guildsInQueue.stream().filter(g -> (mmr - (100 * attempts) <= g.mmr && g.mmr <= mmr + (100 * attempts) && g != gwp)).findAny();
+		if (opponent.isPresent())
 		{
 			GuildWarFind find = new GuildWarFind();
 			find.attackerGuild = gwp;
@@ -184,25 +193,22 @@ public class GuildsWarsQueue
 			 * guildsInQueue.remove(find.defenderGuild);
 			 */
 			return find;
-		}
-		else
+		} else
 		{
 			gwp.attempts++;
 			return null;
 		}
-		
+
 	}
 
-	public ArrayList<QueuedGuild> getGuildsInQueue() {
+	public ArrayList<QueuedGuild> getGuildsInQueue()
+	{
 		return guildsInQueue;
 	}
 
-	public void setGuildsInQueue(ArrayList<QueuedGuild> guildsInQueue) {
+	public void setGuildsInQueue(ArrayList<QueuedGuild> guildsInQueue)
+	{
 		this.guildsInQueue = guildsInQueue;
 	}
-	
-	
-	
-	
-	
+
 }

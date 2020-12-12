@@ -8,14 +8,17 @@ import com.windskull.Inventory.InventoryTransactionGui_YesNo;
 import com.windskull.Items.ItemsCreator;
 import com.windskull.Managers.GuildsManager;
 
-public class Inventory_GuildMenu_Member extends Inventory_GuildMenu {
+public class Inventory_GuildMenu_Member extends Inventory_GuildMenu
+{
 
-	public Inventory_GuildMenu_Member(Player p) {
+	public Inventory_GuildMenu_Member(Player p)
+	{
 		super(p);
 		createInventory();
 	}
 
-	protected void createInventory() {
+	protected void createInventory()
+	{
 		clearInventory();
 		createInventory_Member();
 	}
@@ -23,25 +26,30 @@ public class Inventory_GuildMenu_Member extends Inventory_GuildMenu {
 	private void createInventory_Member()
 	{
 		clearInventory();
-		this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER,GuildsManager._ItemsColorNamePrimal +  "Opusc gildie"), e -> this.acceptLeaveGuild());
-		this.setItem(0, ItemsCreator.getItemStack(Material.CHEST,GuildsManager._ItemsColorNamePrimal +  "Storage"),e -> player.openInventory(GuildsManager.getGuildManager().getGuildManager(guildPlayer.getGuild()).storage.getInventory()));
+		this.setItem(15, ItemsCreator.getItemStack(Material.BARRIER, GuildsManager._ItemsColorNamePrimal + "Opusc gildie"), e -> this.acceptLeaveGuild());
+		this.setItem(0, ItemsCreator.getItemStack(Material.CHEST, GuildsManager._ItemsColorNamePrimal + "Storage"),
+			e -> player.openInventory(GuildsManager.getGuildManager().getGuildManager(guildPlayer.getGuild()).storage.getInventory()));
 	}
-	
-	
+
 	private void acceptLeaveGuild()
 	{
-		InventoryTransactionGui_YesNo accept = new InventoryTransactionGui_YesNo(this,(e) -> {leaveGuild();return true;}, player, "Potwierdz opuszczenie gildi",false);
+		InventoryTransactionGui_YesNo accept = new InventoryTransactionGui_YesNo(this, (e) ->
+		{
+			leaveGuild();
+			return true;
+		}, player, "Potwierdz opuszczenie gildi", false);
 		player.openInventory(accept.getInventory());
 	}
-	
+
 	private void leaveGuild()
 	{
 		Guild g = guildPlayer.getGuild();
 		g.removePlayerFromGuild(guildPlayer);
-		g.getAllOnlineGuildPlayers().forEach(gp ->{ gp.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Gracz " + player.getName() + " opuscil gildie");});
-		player.sendMessage("Opusciles gildie " + g.getName() );
+		g.getAllOnlineGuildPlayers().forEach(gp ->
+		{
+			gp.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Gracz " + player.getName() + " opuscil gildie");
+		});
+		player.sendMessage("Opusciles gildie " + g.getName());
 	}
-	
-	
-	
+
 }

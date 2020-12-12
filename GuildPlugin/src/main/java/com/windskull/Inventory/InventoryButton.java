@@ -8,7 +8,7 @@ package com.windskull.Inventory;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public interface InventoryButton {
-    public void onClick(InventoryClickEvent var1);
+public interface InventoryButton
+{
+	public void onClick(InventoryClickEvent var1);
 }
-

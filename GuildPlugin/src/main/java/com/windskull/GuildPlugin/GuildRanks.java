@@ -1,6 +1,7 @@
 package com.windskull.GuildPlugin;
 
-public enum GuildRanks {
+public enum GuildRanks
+{
 
-	Capitan,Owner,Member
+	Capitan, Owner, Member
 }

@@ -3,7 +3,7 @@
  */
 package com.windskull.Inventory;
 
-public interface InventoryTransaction {
-    public boolean transactionAccepted(InventoryTransactionGui var1);
+public interface InventoryTransaction
+{
+	public boolean transactionAccepted(InventoryTransactionGui var1);
 }
-

@@ -3,7 +3,7 @@
  */
 package com.windskull.Inventory;
 
-public interface TransactionAccept {
-    public void transactionAccepted();
+public interface TransactionAccept
+{
+	public void transactionAccepted();
 }
-

@@ -18,77 +18,81 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-
-
-public class ItemsCreator 
+public class ItemsCreator
 {
-	
-	public static ItemStack getClean(Material mat) {
+
+	public static ItemStack getClean(Material mat)
+	{
 		return ItemsCreator.getItemStack(mat, " ");
 	}
 
-	public static ItemStack getGlassPlane() {
+	public static ItemStack getGlassPlane()
+	{
 		return ItemsCreator.getClean(Material.GLASS_PANE);
 	}
 
-	public static ItemStack getItemStack(Material mat, String name) {
+	public static ItemStack getItemStack(Material mat, String name)
+	{
 		return ItemsCreator.getItemStack(1, mat, name);
 	}
 
-	public static ItemStack getItemStack(int amount, Material mat, String name) {
+	public static ItemStack getItemStack(int amount, Material mat, String name)
+	{
 		ItemStack item = new ItemStack(mat, amount);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);
 		item.setItemMeta(meta);
 		return item;
 	}
-	
+
 	public static ItemStack getPlayerHead(Player p)
 	{
 		ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
-		
+
 		SkullMeta playerheadmeta = (SkullMeta) playerhead.getItemMeta();
 		playerheadmeta.setOwningPlayer(p);
 		playerheadmeta.setDisplayName(p.getName());
 		playerhead.setItemMeta(playerheadmeta);
 		return playerhead;
-	}	
-	public static ItemStack getPlayerHead(Player p,String shortDesc)
+	}
+
+	public static ItemStack getPlayerHead(Player p, String shortDesc)
 	{
 		ItemStack playerhead = new ItemStack(Material.PLAYER_HEAD);
-		
+
 		SkullMeta playerheadmeta = (SkullMeta) playerhead.getItemMeta();
 		playerheadmeta.setOwningPlayer(p);
 		playerheadmeta.setDisplayName(p.getName());
-		
-		List<String> lore = new ArrayList<String>();
+
+		List<String> lore = new ArrayList<>();
 		lore.add(shortDesc);
 		playerheadmeta.setLore(lore);
 		playerhead.setItemMeta(playerheadmeta);
 		return playerhead;
 	}
-	
-	
-	
+
 	public static ItemStack getSoulsAmount(int amount)
 	{
 		ItemStack item = new ItemStack(Material.GHAST_TEAR);
 		ItemMeta im = item.getItemMeta();
 		im.setDisplayName("Lzy ksiezyca: " + amount);
-		im.setLore(Arrays.asList("3 lzy ksiezyca ocala cie","przed przemiana w ducha","w przypdaku smierci"));
+		im.setLore(Arrays.asList("3 lzy ksiezyca ocala cie", "przed przemiana w ducha", "w przypdaku smierci"));
 		item.setItemMeta(im);
 		return item;
 	}
-	public static ItemStack getSkullItem(String base64String,String name) {
+
+	public static ItemStack getSkullItem(String base64String, String name)
+	{
 		ItemStack item = SkullCreator.itemFromBase64(base64String);
 		ItemMeta im = item.getItemMeta();
 		im.setDisplayName(name);
 		item.setItemMeta(im);
-		/*SkullMeta sm = (SkullMeta)item.getItemMeta();
-		sm.setOwningPlayer(Bukkit.getOfflinePlayer((UUID)UUID.fromString(uuidString)));
-		
-		item.setItemMeta((ItemMeta)sm);*/
+		/*
+		 * SkullMeta sm = (SkullMeta)item.getItemMeta();
+		 * sm.setOwningPlayer(Bukkit.getOfflinePlayer((UUID)UUID.fromString(uuidString)));
+		 * 
+		 * item.setItemMeta((ItemMeta)sm);
+		 */
 		return item;
 	}
 }
-

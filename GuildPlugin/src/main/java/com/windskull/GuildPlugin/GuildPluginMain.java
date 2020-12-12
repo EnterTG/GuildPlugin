@@ -19,11 +19,10 @@ import com.windskull.Listeners.PlayerInteractWithBlock;
 import com.windskull.Listeners.PlayerJoinListener;
 import com.windskull.Managers.GuildsManager;
 
-public class GuildPluginMain extends JavaPlugin{
+public class GuildPluginMain extends JavaPlugin
+{
 
-	
-
-	public static Server server; 
+	public static Server server;
 	public static EbeanServer eserver;
 	public static JavaPlugin main;
 
@@ -34,85 +33,91 @@ public class GuildPluginMain extends JavaPlugin{
 		main = this;
 		;
 		EbeanManager manager = getServer().getServicesManager()
-				.getRegistration(EbeanManager.class)
-				.getProvider();
-		EbeanHandler handler = manager.getHandler(this);//EbeanManager.DEFAULT.getHandler(this);//
-		if (handler.isNotInitialized()) 
+			.getRegistration(EbeanManager.class)
+			.getProvider();
+		EbeanHandler handler = manager.getHandler(this);// EbeanManager.DEFAULT.getHandler(this);//
+		if (handler.isNotInitialized())
 		{
 			handler.define(GuildPlayer.class);
 			handler.define(GuildStorage.class);
 			handler.define(Guild.class);
-			try {
+			handler.define(GuildDiplomacy.class);
+			try
+			{
 				handler.initialize();
-			} catch(Exception e) {
+			} catch (Exception e)
+			{
 				// Do what you want to do.
 				System.out.println(e.getMessage());
 				return;
 			}
 		}
-		
+
 		handler.reflect();
 		handler.install();
 		eserver = handler.getServer();
 		server = this.getServer();
 		PluginManager pm = server.getPluginManager();
-		
+
 		pm.registerEvents(new GuildPlayerJoinServerListener(), this);
 		pm.registerEvents(new PlayerJoinListener(), this);
 		pm.registerEvents(new InventoryActionListener(), this);
 		pm.registerEvents(new PlayerInteractWithBlock(), this);
-		
+
 		loadGuild();
-		
-		//disaplayAllGuilds();
+
+		// disaplayAllGuilds();
 	}
-	
+
 	@Override
 	public void onDisable()
 	{
-		GuildsManager guildsManager =GuildsManager.getGuildManager();
-		//Map<Guild,GuildManager> guildsmanagers = guildsManager.getAllGuildsManagers();
-		guildsManager.getAllGuild().forEach(g -> 
+		GuildsManager guildsManager = GuildsManager.getGuildManager();
+		// Map<Guild,GuildManager> guildsmanagers = guildsManager.getAllGuildsManagers();
+		guildsManager.getAllGuild().forEach(g ->
 		{
-			//System.out.println("Manager: " + guildsManager.getGuildManager(g));
+			// System.out.println("Manager: " + guildsManager.getGuildManager(g));
 			guildsManager.getGuildManager(g).save();
 			g.updateGuildBuildings();
 			eserver.update(g);
 			System.out.println(g.getFullString());
 		});
 	}
-	
-	
+
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 	{
-		Player player = ((Player)sender);
+		Player player = ((Player) sender);
 		GuildPlayer guildPlayer = GuildsManager.getGuildManager().getGuildPlayer(player);
-		if (guildPlayer == null) 
+		if (guildPlayer == null)
+		{
 			player.openInventory(new Inventory_GuildMenu_NewPlayer(player).getInventory());
-		else if(guildPlayer.getRang().equals(GuildRanks.Owner))
+		} else if (guildPlayer.getRang().equals(GuildRanks.Owner))
+		{
 			player.openInventory(new Inventory_GuildMenu_Owner(player).getInventory());
-		else
+		} else
+		{
 			player.openInventory(new Inventory_GuildMenu_Member(player).getInventory());
-		
-		
-		//((Player)sender).openInventory(new Inventory_GuildMenu((Player)sender).getInventory());
+		}
+
+		// ((Player)sender).openInventory(new Inventory_GuildMenu((Player)sender).getInventory());
 		return super.onCommand(sender, command, label, args);
 	}
-
-
 
 	private void loadGuild()
 	{
 		GuildsManager gm = GuildsManager.getGuildManager();
-		eserver.find(Guild.class).findList().forEach( (Guild dg) ->{ gm.addNewGuild(dg); dg.mapGuildBuildings();});
+		eserver.find(Guild.class).findList().forEach((Guild dg) ->
+		{
+			gm.addNewGuild(dg);
+			dg.mapGuildBuildings();
+		});
 	}
-	
-	
+
 	private void disaplayAllGuilds()
 	{
 		GuildsManager gm = GuildsManager.getGuildManager();
-		gm.getAllGuild().forEach( g -> System.out.println(g.toString()));
-		
+		gm.getAllGuild().forEach(g -> System.out.println(g.toString()));
+
 	}
 }

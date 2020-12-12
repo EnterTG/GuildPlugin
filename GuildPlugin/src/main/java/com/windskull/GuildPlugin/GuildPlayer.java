@@ -15,130 +15,148 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @Entity
-@Table(name="PlayersGuilds")
-public class GuildPlayer {
-    @Id
-    private int id;
-    @OneToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="playerGuild")
-    private Guild guild;
-    @Column
-    private UUID playeruuid;
-    @Column
-    private GuildRanks rang;
-    
-    @Transient
-    private Player player;
+@Table(name = "PlayersGuilds")
+public class GuildPlayer
+{
+	@Id
+	private int id;
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "playerGuild")
+	private Guild guild;
+	@Column
+	private UUID playeruuid;
+	@Column
+	private GuildRanks rang;
 
-    
-    
-    public GuildPlayer()
-    {
-    	
-    }
-    public void init()
-    {
-    	player = Bukkit.getPlayer(playeruuid);
-    }
+	@Transient
+	private Player player;
 
-    public GuildPlayer(Player p, GuildRanks rang, Guild g) {
-    	this.rang = rang;
-    	this.playeruuid = p.getUniqueId();
-    	guild = g;
+	public GuildPlayer()
+	{
+
 	}
 
-	public int getId() {
-        return this.id;
-    }
+	public void init()
+	{
+		player = Bukkit.getPlayer(playeruuid);
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public GuildPlayer(Player p, GuildRanks rang, Guild g)
+	{
+		this.rang = rang;
+		this.playeruuid = p.getUniqueId();
+		guild = g;
+	}
 
-    public Guild getGuild() {
-        return this.guild;
-    }
+	public int getId()
+	{
+		return this.id;
+	}
 
-    public void setGuild(Guild guild) {
-        this.guild = guild;
-    }
+	public void setId(int id)
+	{
+		this.id = id;
+	}
 
-    public UUID getPlayeruuid() {
-        return this.playeruuid;
-    }
+	public Guild getGuild()
+	{
+		return this.guild;
+	}
 
-    public void setPlayeruuid(UUID playeruuid) {
-        this.playeruuid = playeruuid;
-    }
+	public void setGuild(Guild guild)
+	{
+		this.guild = guild;
+	}
 
-    public GuildRanks getRang() {
-        return this.rang;
-    }
+	public UUID getPlayeruuid()
+	{
+		return this.playeruuid;
+	}
 
-    public void setRang(GuildRanks rang) {
-        this.rang = rang;
-    }
+	public void setPlayeruuid(UUID playeruuid)
+	{
+		this.playeruuid = playeruuid;
+	}
+
+	public GuildRanks getRang()
+	{
+		return this.rang;
+	}
+
+	public void setRang(GuildRanks rang)
+	{
+		this.rang = rang;
+	}
 
 	/**
 	 * @return the player
 	 */
-	public Player getPlayer() {
+	public Player getPlayer()
+	{
 		return player;
 	}
 
 	/**
 	 * @param player the player to set
 	 */
-	public void setPlayer(Player player) {
+	public void setPlayer(Player player)
+	{
 		this.player = player;
 	}
+
 	@Override
-	public int hashCode() {
-		/*final int prime = 31;
-		int result = 1;
-		result = prime * result + ((playeruuid == null) ? 0 : playeruuid.hashCode());
-		return result;*/
+	public int hashCode()
+	{
+		/*
+		 * final int prime = 31;
+		 * int result = 1;
+		 * result = prime * result + ((playeruuid == null) ? 0 : playeruuid.hashCode());
+		 * return result;
+		 */
 		return playeruuid.hashCode();
-		
+
 	}
+
 	@Override
-	public boolean equals(Object obj) {
-		/*if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GuildPlayer other = (GuildPlayer) obj;
-		if (playeruuid == null) {
-			if (other.playeruuid != null)
-				return false;
-		} else if (!playeruuid.equals(other.playeruuid))
-			return false;
-		return true; */
-		if(obj instanceof GuildPlayer)
+	public boolean equals(Object obj)
+	{
+		/*
+		 * if (this == obj)
+		 * return true;
+		 * if (obj == null)
+		 * return false;
+		 * if (getClass() != obj.getClass())
+		 * return false;
+		 * GuildPlayer other = (GuildPlayer) obj;
+		 * if (playeruuid == null) {
+		 * if (other.playeruuid != null)
+		 * return false;
+		 * } else if (!playeruuid.equals(other.playeruuid))
+		 * return false;
+		 * return true;
+		 */
+		if (obj instanceof GuildPlayer)
 		{
 			try
 			{
 				return playeruuid.equals(((GuildPlayer) obj).playeruuid);
-			}
-			catch(Exception e)
+			} catch (Exception e)
 			{
 				return false;
 			}
 		}
 		return false;
-		
+
 	}
-    @Override
-    public String toString() {
-    	// TODO Auto-generated method stub
-    	return "Player ID: " + id + System.lineSeparator() +
-    			"Player UUID: " + playeruuid + System.lineSeparator() +
-    			"Guild ID: " + guild.getId() + System.lineSeparator() +
-    			"Rang: " + rang + System.lineSeparator() ;
-    }
 
-	
+	@Override
+	public String toString()
+	{
+		// TODO Auto-generated method stub
+		return "Player ID: " + id + System.lineSeparator() +
+			"Player UUID: " + playeruuid + System.lineSeparator() +
+			"Guild ID: " + guild.getId() + System.lineSeparator() +
+			"Rang: " + rang + System.lineSeparator();
+	}
+
 }
-

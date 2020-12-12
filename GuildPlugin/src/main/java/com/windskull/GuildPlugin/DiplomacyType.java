@@ -1,6 +1,7 @@
 package com.windskull.GuildPlugin;
 
-public enum StorageType
+public enum DiplomacyType
 {
-	NORMAL, SAFE
+
+	WAR, PEACE
 }

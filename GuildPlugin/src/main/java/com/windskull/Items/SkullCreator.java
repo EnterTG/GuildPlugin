@@ -1,16 +1,16 @@
 package com.windskull.Items;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Base64;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Base64;
-import java.util.UUID;
 
 /**
  * A library for the Bukkit API to create player skulls
@@ -20,7 +20,8 @@ import java.util.UUID;
  *
  * @author Dean B on 12/28/2016.
  */
-public class SkullCreator {
+public class SkullCreator
+{
 
 	/**
 	 * Creates a player skull based on a player's name.
@@ -31,7 +32,8 @@ public class SkullCreator {
 	 * @deprecated names don't make for good identifiers
 	 */
 	@Deprecated
-	public static ItemStack itemFromName(String name) {
+	public static ItemStack itemFromName(String name)
+	{
 		ItemStack item = getPlayerSkullItem();
 
 		return itemWithName(item, name);
@@ -47,13 +49,13 @@ public class SkullCreator {
 	 * @deprecated names don't make for good identifiers
 	 */
 	@Deprecated
-	public static ItemStack itemWithName(ItemStack item, String name) {
+	public static ItemStack itemWithName(ItemStack item, String name)
+	{
 		notNull(item, "item");
 		notNull(name, "name");
 
 		return Bukkit.getUnsafe().modifyItemStack(item,
-				"{SkullOwner:\"" + name + "\"}"
-		);
+			"{SkullOwner:\"" + name + "\"}");
 	}
 
 	/**
@@ -62,7 +64,8 @@ public class SkullCreator {
 	 * @param id The Player's UUID
 	 * @return The head of the Player
 	 */
-	public static ItemStack itemFromUuid(UUID id) {
+	public static ItemStack itemFromUuid(UUID id)
+	{
 		ItemStack item = getPlayerSkullItem();
 
 		return itemWithUuid(item, id);
@@ -75,7 +78,8 @@ public class SkullCreator {
 	 * @param id The Player's UUID
 	 * @return The head of the Player
 	 */
-	public static ItemStack itemWithUuid(ItemStack item, UUID id) {
+	public static ItemStack itemWithUuid(ItemStack item, UUID id)
+	{
 		notNull(item, "item");
 		notNull(id, "id");
 
@@ -92,12 +96,12 @@ public class SkullCreator {
 	 * @param url The URL of the Mojang skin
 	 * @return The head associated with the URL
 	 */
-	public static ItemStack itemFromUrl(String url) {
+	public static ItemStack itemFromUrl(String url)
+	{
 		ItemStack item = getPlayerSkullItem();
 
 		return itemWithUrl(item, url);
 	}
-
 
 	/**
 	 * Creates a player skull based on a Mojang server URL.
@@ -106,7 +110,8 @@ public class SkullCreator {
 	 * @param url The URL of the Mojang skin
 	 * @return The head associated with the URL
 	 */
-	public static ItemStack itemWithUrl(ItemStack item, String url) {
+	public static ItemStack itemWithUrl(ItemStack item, String url)
+	{
 		notNull(item, "item");
 		notNull(url, "url");
 
@@ -119,7 +124,8 @@ public class SkullCreator {
 	 * @param base64 The base64 string containing the texture
 	 * @return The head with a custom texture
 	 */
-	public static ItemStack itemFromBase64(String base64) {
+	public static ItemStack itemFromBase64(String base64)
+	{
 		ItemStack item = getPlayerSkullItem();
 		return itemWithBase64(item, base64);
 	}
@@ -132,14 +138,14 @@ public class SkullCreator {
 	 * @return The head with a custom texture
 	 */
 	@SuppressWarnings("deprecation")
-	public static ItemStack itemWithBase64(ItemStack item, String base64) {
+	public static ItemStack itemWithBase64(ItemStack item, String base64)
+	{
 		notNull(item, "item");
 		notNull(base64, "base64");
 
 		UUID hashAsId = new UUID(base64.hashCode(), base64.hashCode());
 		return Bukkit.getUnsafe().modifyItemStack(item,
-				"{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + base64 + "\"}]}}}"
-		);
+			"{SkullOwner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + base64 + "\"}]}}}");
 	}
 
 	/**
@@ -151,7 +157,8 @@ public class SkullCreator {
 	 * @deprecated names don't make for good identifiers
 	 */
 	@Deprecated
-	public static void blockWithName(Block block, String name) {
+	public static void blockWithName(Block block, String name)
+	{
 		notNull(block, "block");
 		notNull(name, "name");
 
@@ -165,7 +172,8 @@ public class SkullCreator {
 	 * @param block The block to set
 	 * @param id The player to set it to
 	 */
-	public static void blockWithUuid(Block block, UUID id) {
+	public static void blockWithUuid(Block block, UUID id)
+	{
 		notNull(block, "block");
 		notNull(id, "id");
 
@@ -179,7 +187,8 @@ public class SkullCreator {
 	 * @param block The block to set
 	 * @param url The mojang URL to set it to use
 	 */
-	public static void blockWithUrl(Block block, String url) {
+	public static void blockWithUrl(Block block, String url)
+	{
 		notNull(block, "block");
 		notNull(url, "url");
 
@@ -192,67 +201,83 @@ public class SkullCreator {
 	 * @param block The block to set
 	 * @param base64 The base64 to set it to use
 	 */
-	public static void blockWithBase64(Block block, String base64) {
+	public static void blockWithBase64(Block block, String base64)
+	{
 		notNull(block, "block");
 		notNull(base64, "base64");
 
 		UUID hashAsId = new UUID(base64.hashCode(), base64.hashCode());
 
 		String args = String.format(
-				"%d %d %d %s",
-				block.getX(),
-				block.getY(),
-				block.getZ(),
-				"{Owner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + base64 + "\"}]}}}"
-		);
+			"%d %d %d %s",
+			block.getX(),
+			block.getY(),
+			block.getZ(),
+			"{Owner:{Id:\"" + hashAsId + "\",Properties:{textures:[{Value:\"" + base64 + "\"}]}}}");
 
-		if (newerApi()) {
+		if (newerApi())
+		{
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "data merge block " + args);
-		} else {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(),"blockdata " + args);
+		} else
+		{
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "blockdata " + args);
 		}
 	}
 
-	private static boolean newerApi() {
-		try {
+	private static boolean newerApi()
+	{
+		try
+		{
 
 			Material.valueOf("PLAYER_HEAD");
 			return true;
 
-		} catch (IllegalArgumentException e) { // If PLAYER_HEAD doesn't exist
+		} catch (IllegalArgumentException e)
+		{ // If PLAYER_HEAD doesn't exist
 			return false;
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	private static ItemStack getPlayerSkullItem() {
-		if (newerApi()) {
+	private static ItemStack getPlayerSkullItem()
+	{
+		if (newerApi())
+		{
 			return new ItemStack(Material.valueOf("PLAYER_HEAD"));
-		} else {
+		} else
+		{
 			return new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
 		}
 	}
 
-	private static void setBlockType(Block block) {
-		try {
+	private static void setBlockType(Block block)
+	{
+		try
+		{
 			block.setType(Material.valueOf("PLAYER_HEAD"), false);
-		} catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e)
+		{
 			block.setType(Material.valueOf("SKULL"), false);
 		}
 	}
 
-	private static void notNull(Object o, String name) {
-		if (o == null) {
+	private static void notNull(Object o, String name)
+	{
+		if (o == null)
+		{
 			throw new NullPointerException(name + " should not be null!");
 		}
 	}
 
-	private static String urlToBase64(String url) {
+	private static String urlToBase64(String url)
+	{
 
 		URI actualUrl;
-		try {
+		try
+		{
 			actualUrl = new URI(url);
-		} catch (URISyntaxException e) {
+		} catch (URISyntaxException e)
+		{
 			throw new RuntimeException(e);
 		}
 		String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl.toString() + "\"}}}";
@@ -260,20 +285,22 @@ public class SkullCreator {
 	}
 }
 
-/* Format for skull
-{
-   display:{
-      Name:"Cheese"
-   },
-   SkullOwner:{
-      Id:"9c919b83-f3fe-456f-a824-7d1d08cc8bd2",
-      Properties:{
-         textures:[
-            {
-               Value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU1ZDYxMWE4NzhlODIxMjMxNzQ5YjI5NjU3MDhjYWQ5NDI2NTA2NzJkYjA5ZTI2ODQ3YTg4ZTJmYWMyOTQ2In19fQ=="
-            }
-         ]
-      }
-   }
-}
+/*
+ * Format for skull
+ * {
+ * display:{
+ * Name:"Cheese"
+ * },
+ * SkullOwner:{
+ * Id:"9c919b83-f3fe-456f-a824-7d1d08cc8bd2",
+ * Properties:{
+ * textures:[
+ * {
+ * Value:
+ * "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU1ZDYxMWE4NzhlODIxMjMxNzQ5YjI5NjU3MDhjYWQ5NDI2NTA2NzJkYjA5ZTI2ODQ3YTg4ZTJmYWMyOTQ2In19fQ=="
+ * }
+ * ]
+ * }
+ * }
+ * }
  */
