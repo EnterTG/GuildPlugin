@@ -40,7 +40,6 @@ public abstract class Inventory_GuildMenu extends InventoryGui
 		if (inventory == null)
 		{
 			this.inventory = Bukkit.createInventory(this, 36, "Gildia");
-			// clearInventory();
 		}
 	}
 

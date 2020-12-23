@@ -135,7 +135,7 @@ public class GuildsWar implements Listener
 			p.teleport((v.booleanValue() ? attackerGuild : defenderGuild).getGuild().getGuildLocation());
 		});
 		leavers
-			.forEach((p, v) -> offlineTeleport(Bukkit.getOfflinePlayer(p), (v.booleanValue() ? attackerGuild : defenderGuild).getGuild().getGuildLocation(), v.booleanValue()));
+			.forEach((p, v) -> offlineTeleport(Bukkit.getOfflinePlayer(p), (v.booleanValue() ? attackerGuild : defenderGuild).getGuild().getGuildLocation()));
 
 		EntityDamageEvent.getHandlerList().unregister(this);
 		PlayerQuitEvent.getHandlerList().unregister(this);
@@ -197,7 +197,6 @@ public class GuildsWar implements Listener
 			if (e.getEntity() instanceof Player)
 			{
 				Player player = (Player) e.getEntity();
-
 				if (player.getHealth() - e.getFinalDamage() < 1)
 				{
 					if (cashe.containsKey(player))
@@ -216,7 +215,7 @@ public class GuildsWar implements Listener
 	* @param destination New location for the player
 	* @return True if the teleport is successful, false otherwise
 	*/
-	private boolean offlineTeleport(OfflinePlayer player, Location destination, boolean attacker)
+	public static boolean offlineTeleport(OfflinePlayer player, Location destination)
 	{
 		System.out.println("OflineTeleport: " + player.getName());
 		PlayerHandler offlinePlayer = new PlayerHandler(PlayerHandler.findPlayerFile(player.getUniqueId()));
@@ -233,7 +232,7 @@ public class GuildsWar implements Listener
 			Player p = Bukkit.getPlayer(player.getUniqueId());
 			if (p != null)
 			{
-				p.teleport((attacker ? attackerGuild : defenderGuild).getGuild().getGuildLocation());
+				p.teleport(destination);
 				return true;
 			}
 			return false;

@@ -28,9 +28,6 @@ public class Inventory_GuildMenu_Diplomacy extends Inventory_GuildMenu
 		super(p);
 		createInventory();
 	}
-
-	
-
 	
 	
 	public void createInventory()
@@ -79,7 +76,7 @@ public class Inventory_GuildMenu_Diplomacy extends Inventory_GuildMenu
 	}
 	
 	
-	public void deleteAlly(GuildDiplomacy g)
+	public void deleteAlly( GuildDiplomacy g)
 	{
 		Guild guild = guildPlayer.getGuild();
 		Optional<GuildDiplomacy> toRem = g.getReciver().getAllDiplomacy().stream().filter(gd ->/* gd.getDiplomacyType() == DiplomacyType.PEACE &&*/ gd.getReciver() == g.getDeclared()).findAny();
@@ -223,7 +220,10 @@ public class Inventory_GuildMenu_Diplomacy extends Inventory_GuildMenu
 			guildPlayer.getGuild().getAllDiplomacy().add(gd);
 			GuildPluginMain.eserver.save(gd.getDeclared());
 			//GuildPluginMain.eserver.save(gd);
-			player.sendMessage(GuildsManager._GlobalPrefix + "Wypowiedziales wojne gildi: " + GuildsManager._ItemsColorNameSecond + g.getName());
+			g.getAllOnlineGuildPlayers().forEach(gp -> {if(gp.getPlayer() == null) gp.init(); gp.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Gildia" +gd.getDeclared().getName()+" ustawila status wojna z wasza gildia");});
+			guildPlayer.getGuild().getAllOnlineGuildPlayers().forEach(gp -> {if(gp.getPlayer() == null) gp.init(); gp.getPlayer().sendMessage(GuildsManager._GlobalPrefix + "Twoja gildia zmienila status z gildia " +g.getName()+" na wojna");});
+			
+			//player.sendMessage(GuildsManager._GlobalPrefix + "Wojna z gildia " + GuildsManager._ItemsColorNameSecond + g.getName() + " zostala wypowiedzana");
 		}
 		else
 		{

@@ -20,4 +20,20 @@ public class GuildBuilding
 	{
 
 	}
+@Override
+	public boolean equals(Object obj)
+	{
+		if(obj instanceof GuildBuilding)
+		{
+			GuildBuilding gb = (GuildBuilding) obj;
+			return buildingName.equals(gb.buildingName);
+		}
+		return false;
+	}	
+	
+	@Override
+	public int hashCode()
+	{
+		return buildingName.hashCode();
+	}
 }

@@ -61,7 +61,7 @@ public class PlayerInteractWithBlock implements Listener
 		return Arrays.stream(guildRanks).anyMatch(gr -> gr == GuildsManager.getGuildManager().getGuildPlayer(p).getRang());
 	}
 
-	public boolean checkPlayerPosition(Player p)
+	public static boolean checkPlayerPosition(Player p)
 	{
 		Location loc = p.getLocation();
 		GuildPlayer gp = GuildsManager.getGuildManager().getGuildPlayer(p);
